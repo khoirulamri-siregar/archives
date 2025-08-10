@@ -274,18 +274,22 @@
                 position: relative;
             }
             .main-content {
-                margin-left: 300px; /* Adjust based on sidebar width */
+                margin-left: 340px; /* Adjust based on sidebar width + padding */
+                width: auto;
             }
             .main-content-header .toggle-sidebar-button {
                 display: none;
+            }
+            .bug-module.active {
+                display: block;
             }
         }
     </style>
 </head>
 <body>
     <div id="welcome-page" class="welcome-page active">
-        <h1>Red Team Archives</h1>
-        <p>Perpustakaan pribadi tentang bug dan teknik keamanan.</p>
+        <h1>Archives</h1>
+        <p>Vulnerability Data.</p>
         <div class="welcome-search">
             <input type="text" id="welcome-search-input" class="welcome-search-input" placeholder="Cari bug, payload, atau kategori..." onkeyup="handleWelcomeSearch(event)">
         </div>
@@ -824,7 +828,9 @@
                     module.classList.remove('active');
                 });
                 document.getElementById(`bug-module-${id}`).classList.add('active');
-                sidebar.classList.remove('active'); // Close sidebar after selecting a bug
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active'); // Close sidebar after selecting a bug on mobile
+                }
             }
 
             window.filterBugs = function() {
