@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Team Archives</title>
+    <title>Archives</title>
     <style>
         :root {
             --dark-bg: #121212;
@@ -19,8 +19,31 @@
             margin: 0;
             padding: 0;
             height: 100vh;
-            overflow: hidden; /* Prevent scrolling on body */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #2d0000, #121212 75%);
+            opacity: 0.3;
+            z-index: -1;
+            animation: pulse-gradient 15s infinite ease-in-out;
+        }
+        @keyframes pulse-gradient {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
         .welcome-page, .main-page {
             display: none;
             width: 100%;
@@ -38,6 +61,8 @@
         }
         .main-page.active {
             display: flex;
+            flex: 1;
+            position: relative;
         }
         .welcome-page h1 {
             font-size: 3.5rem;
@@ -55,7 +80,7 @@
             animation: fadeIn 1.5s ease-in-out;
         }
         .welcome-search {
-            width: 50%;
+            width: 80%;
             max-width: 600px;
             animation: fadeIn 2s ease-in-out;
         }
@@ -75,22 +100,39 @@
             box-shadow: 0 0 15px var(--red-accent);
             transform: scale(1.02);
         }
+        
+        .sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            background-color: #1a1a1a;
+            border-right: 1px solid #333;
+            padding: 20px;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+        }
+        .sidebar.active {
+            transform: translateX(0);
+        }
         .main-content {
             flex-grow: 1;
-            padding: 40px;
+            padding: 20px;
             overflow-y: auto;
-            position: relative;
-            z-index: 1;
-            background-color: var(--dark-bg);
+            transition: margin-left 0.3s ease-in-out;
         }
+
         .bug-module {
             display: none;
+            animation: fadeIn 0.5s ease-in-out;
         }
         .bug-module.active {
             display: block;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
         }
         .main-content-header {
             display: flex;
@@ -102,12 +144,14 @@
             border-left: 4px solid var(--red-accent);
             padding-left: 10px;
             margin: 0;
+            font-size: 1.5rem;
         }
         .bug-section {
             margin-top: 30px;
         }
         .bug-section h3 {
             color: var(--red-accent);
+            font-size: 1.2rem;
         }
         pre {
             background-color: var(--dark-card);
@@ -117,26 +161,34 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+        
+        /* Navigation Buttons */
         .toggle-sidebar-button {
             background: none;
             border: none;
             color: var(--text-color);
-            font-size: 2rem;
+            font-size: 1.5rem;
             cursor: pointer;
             padding: 5px;
             line-height: 1;
+            transition: color 0.2s;
         }
-        
-        /* New styles for the bug list view */
-        #bug-module-list h2 {
+        .toggle-sidebar-button:hover {
+            color: var(--red-accent);
+        }
+
+        /* Bug List View as Cards */
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
         #bug-list {
             list-style-type: none;
             padding: 0;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            gap: 15px;
         }
         #bug-list li {
             background-color: var(--dark-card);
@@ -145,25 +197,88 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100px;
-            font-weight: bold;
+            align-items: flex-start;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease-in-out;
         }
         #bug-list li:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            background-color: #2c2c2c;
         }
-
+        .bug-card-title {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+        .bug-card-title .icon {
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: var(--red-accent);
+        }
+        .bug-card-description {
+            font-size: 0.9rem;
+            color: var(--light-gray);
+            margin: 0;
+        }
+        
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+        
+        /* Mobile Specific */
+        @media (max-width: 768px) {
+            .welcome-page h1 {
+                font-size: 2.5rem;
+            }
+            .welcome-page p {
+                font-size: 1rem;
+            }
+            .welcome-search {
+                width: 90%;
+            }
+            .main-page.active {
+                display: block;
+            }
+            .main-content {
+                padding: 15px;
+            }
+            .bug-module h2 {
+                font-size: 1.2rem;
+            }
+            .sidebar {
+                width: 100%;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            #bug-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Desktop Specific */
+        @media (min-width: 769px) {
+            .sidebar {
+                transform: translateX(0);
+                position: relative;
+            }
+            .main-content {
+                margin-left: 300px; /* Adjust based on sidebar width */
+            }
+            .main-content-header .toggle-sidebar-button {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -177,36 +292,81 @@
     </div>
     
     <div id="main-page" class="main-page">
-        <div class="main-content" id="main-content">
-
-            <div id="bug-module-list" class="bug-module active">
-                <div class="main-content-header">
-                    <h2>Daftar Bug</h2>
-                    <input type="text" id="search-input" class="welcome-search-input" placeholder="Cari bug..." onkeyup="filterBugs()">
-                </div>
-                <ul id="bug-list">
-                    <li onclick="showBugModule('sqli')" data-category="SQLi">SQL Injection (SQLi)</li>
-                    <li onclick="showBugModule('xss')" data-category="XSS">Cross-Site Scripting (XSS)</li>
-                    <li onclick="showBugModule('lfi')" data-category="LFI/RFI">Local File Inclusion (LFI)</li>
-                    <li onclick="showBugModule('rce')" data-category="RCE">Remote Code Execution (RCE)</li>
-                    <li onclick="showBugModule('csrf')" data-category="CSRF">Cross-Site Request Forgery (CSRF)</li>
-                    <li onclick="showBugModule('ssrf')" data-category="SSRF">Server-Side Request Forgery (SSRF)</li>
-                    <li onclick="showBugModule('idor')" data-category="IDOR">Insecure Direct Object Reference (IDOR)</li>
-                    <li onclick="showBugModule('auth-bypass')" data-category="Authentication Bypass">Authentication Bypass</li>
-                    <li onclick="showBugModule('file-upload')" data-category="File Upload">File Upload Vulnerability</li>
-                    <li onclick="showBugModule('cmd-injection')" data-category="Command Injection">Command Injection</li>
-                    <li onclick="showBugModule('open-redirect')" data-category="Open Redirect">Open Redirect</li>
-                    <li onclick="showBugModule('broken-ac')" data-category="Broken Access Control">Broken Access Control</li>
-                    <li onclick="showBugModule('info-disclosure')" data-category="Information Disclosure">Information Disclosure</li>
-                    <li onclick="showBugModule('misconfig')" data-category="Security Misconfiguration">Security Misconfiguration</li>
-                    <li onclick="showBugModule('xxe')" data-category="XXE">XML External Entity (XXE)</li>
-                </ul>
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>Daftar Bug</h2>
+                <button class="toggle-sidebar-button" onclick="toggleSidebar()">✕</button>
             </div>
-
-            <div id="bug-module-sqli" class="bug-module">
+            <input type="text" id="search-input" class="welcome-search-input" placeholder="Cari bug..." onkeyup="filterBugs()">
+            <ul id="bug-list">
+                <li onclick="showBugModule('sqli')" data-category="SQLi">
+                    <div class="bug-card-title"><span class="icon">SQL</span> SQL Injection (SQLi)</div>
+                    <p class="bug-card-description">Menyuntikkan kode SQL berbahaya untuk mengontrol database.</p>
+                </li>
+                <li onclick="showBugModule('xss')" data-category="XSS">
+                    <div class="bug-card-title"><span class="icon">💻</span> Cross-Site Scripting (XSS)</div>
+                    <p class="bug-card-description">Menyuntikkan skrip berbahaya ke browser pengguna lain.</p>
+                </li>
+                <li onclick="showBugModule('lfi')" data-category="LFI/RFI">
+                    <div class="bug-card-title"><span class="icon">📁</span> Local File Inclusion (LFI)</div>
+                    <p class="bug-card-description">Membaca file sensitif dari server target.</p>
+                </li>
+                <li onclick="showBugModule('rce')" data-category="RCE">
+                    <div class="bug-card-title"><span class="icon">🔥</span> Remote Code Execution (RCE)</div>
+                    <p class="bug-card-description">Mengeksekusi perintah di server dari jarak jauh.</p>
+                </li>
+                <li onclick="showBugModule('csrf')" data-category="CSRF">
+                    <div class="bug-card-title"><span class="icon">🔗</span> Cross-Site Request Forgery (CSRF)</div>
+                    <p class="bug-card-description">Memaksa pengguna untuk mengirim permintaan yang tidak disengaja.</p>
+                </li>
+                <li onclick="showBugModule('ssrf')" data-category="SSRF">
+                    <div class="bug-card-title"><span class="icon">🌐</span> Server-Side Request Forgery (SSRF)</div>
+                    <p class="bug-card-description">Memaksa server untuk mengakses URL internal.</p>
+                </li>
+                <li onclick="showBugModule('idor')" data-category="IDOR">
+                    <div class="bug-card-title"><span class="icon">🔑</span> Insecure Direct Object Reference (IDOR)</div>
+                    <p class="bug-card-description">Mengakses data pengguna lain dengan manipulasi ID.</p>
+                </li>
+                <li onclick="showBugModule('auth-bypass')" data-category="Authentication Bypass">
+                    <div class="bug-card-title"><span class="icon">🔓</span> Authentication Bypass</div>
+                    <p class="bug-card-description">Melewati proses login untuk mendapatkan akses.</p>
+                </li>
+                <li onclick="showBugModule('file-upload')" data-category="File Upload">
+                    <div class="bug-card-title"><span class="icon">📤</span> File Upload Vulnerability</div>
+                    <p class="bug-card-description">Mengunggah file berbahaya untuk mengambil alih server.</p>
+                </li>
+                <li onclick="showBugModule('cmd-injection')" data-category="Command Injection">
+                    <div class="bug-card-title"><span class="icon">▶️</span> Command Injection</div>
+                    <p class="bug-card-description">Menjalankan perintah OS melalui input yang tidak divalidasi.</p>
+                </li>
+                <li onclick="showBugModule('open-redirect')" data-category="Open Redirect">
+                    <div class="bug-card-title"><span class="icon">➡️</span> Open Redirect</div>
+                    <p class="bug-card-description">Mengarahkan pengguna ke situs berbahaya melalui URL.</p>
+                </li>
+                <li onclick="showBugModule('broken-ac')" data-category="Broken Access Control">
+                    <div class="bug-card-title"><span class="icon">🛑</span> Broken Access Control</div>
+                    <p class="bug-card-description">Mengakses fitur yang seharusnya terbatas untuk role tertentu.</p>
+                </li>
+                <li onclick="showBugModule('info-disclosure')" data-category="Information Disclosure">
+                    <div class="bug-card-title"><span class="icon">📜</span> Information Disclosure</div>
+                    <p class="bug-card-description">Mengungkap data sensitif secara tidak sengaja.</p>
+                </li>
+                <li onclick="showBugModule('misconfig')" data-category="Security Misconfiguration">
+                    <div class="bug-card-title"><span class="icon">⚙️</span> Security Misconfiguration</div>
+                    <p class="bug-card-description">Kesalahan konfigurasi yang menyebabkan celah keamanan.</p>
+                </li>
+                <li onclick="showBugModule('xxe')" data-category="XXE">
+                    <div class="bug-card-title"><span class="icon">XML</span> XML External Entity (XXE)</div>
+                    <p class="bug-card-description">Memanfaatkan kelemahan pada parser XML.</p>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main-content" id="main-content">
+            <div id="bug-module-sqli" class="bug-module active">
                 <div class="main-content-header">
                     <h2>Modul: SQL Injection (SQLi)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -252,7 +412,7 @@
             <div id="bug-module-xss" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Cross-Site Scripting (XSS)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -298,7 +458,7 @@
             <div id="bug-module-lfi" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Local File Inclusion (LFI)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -338,7 +498,7 @@
             <div id="bug-module-rce" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Remote Code Execution (RCE)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -381,7 +541,7 @@
             <div id="bug-module-csrf" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Cross-Site Request Forgery (CSRF)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -422,7 +582,7 @@
             <div id="bug-module-ssrf" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Server-Side Request Forgery (SSRF)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -453,7 +613,7 @@
             <div id="bug-module-idor" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Insecure Direct Object Reference (IDOR)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -478,7 +638,7 @@
             <div id="bug-module-auth-bypass" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Authentication Bypass</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -503,7 +663,7 @@
             <div id="bug-module-file-upload" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: File Upload Vulnerability</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -529,7 +689,7 @@
             <div id="bug-module-cmd-injection" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Command Injection</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -557,7 +717,7 @@
             <div id="bug-module-open-redirect" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Open Redirect</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -585,7 +745,7 @@
             <div id="bug-module-broken-ac" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Broken Access Control</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
                     <h3>Pendahuluan</h3>
@@ -614,21 +774,21 @@
             <div id="bug-module-info-disclosure" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Information Disclosure</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <p>Konten modul akan ditambahkan di sini...</p>
             </div>
             <div id="bug-module-misconfig" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: Security Misconfiguration</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <p>Konten modul akan ditambahkan di sini...</p>
             </div>
             <div id="bug-module-xxe" class="bug-module">
                 <div class="main-content-header">
                     <h2>Modul: XML External Entity (XXE)</h2>
-                    <button class="toggle-sidebar-button" onclick="showBugList()">☰</button>
+                    <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <p>Konten modul akan ditambahkan di sini...</p>
             </div>
@@ -640,15 +800,20 @@
             const welcomePage = document.getElementById('welcome-page');
             const mainPage = document.getElementById('main-page');
             const welcomeSearchInput = document.getElementById('welcome-search-input');
+            const sidebar = document.getElementById('sidebar');
             const mainSearchInput = document.getElementById('search-input');
-            const bugModuleList = document.getElementById('bug-module-list');
             const bugList = document.getElementById('bug-list');
             const allBugModules = document.querySelectorAll('.bug-module');
+
+            window.toggleSidebar = function() {
+                sidebar.classList.toggle('active');
+            }
 
             window.handleWelcomeSearch = function(event) {
                 if (event.key === 'Enter' || event.type === 'click') {
                     const searchTerm = welcomeSearchInput.value;
                     toggleView('main-page');
+                    sidebar.classList.add('active'); // Open sidebar on search
                     mainSearchInput.value = searchTerm;
                     filterBugs();
                 }
@@ -659,13 +824,7 @@
                     module.classList.remove('active');
                 });
                 document.getElementById(`bug-module-${id}`).classList.add('active');
-            }
-            
-            window.showBugList = function() {
-                allBugModules.forEach(module => {
-                    module.classList.remove('active');
-                });
-                bugModuleList.classList.add('active');
+                sidebar.classList.remove('active'); // Close sidebar after selecting a bug
             }
 
             window.filterBugs = function() {
@@ -674,11 +833,12 @@
                 
                 for (let i = 0; i < listItems.length; i++) {
                     const item = listItems[i];
-                    const text = item.textContent || item.innerText;
+                    const title = item.querySelector('.bug-card-title').textContent || item.querySelector('.bug-card-title').innerText;
+                    const description = item.querySelector('.bug-card-description').textContent || item.querySelector('.bug-card-description').innerText;
                     const category = item.getAttribute('data-category');
 
-                    if (text.toLowerCase().indexOf(filter) > -1 || category.toLowerCase().indexOf(filter) > -1) {
-                        item.style.display = "flex"; /* Change to flex to maintain layout */
+                    if (title.toLowerCase().indexOf(filter) > -1 || description.toLowerCase().indexOf(filter) > -1 || category.toLowerCase().indexOf(filter) > -1) {
+                        item.style.display = "flex";
                     } else {
                         item.style.display = "none";
                     }
@@ -691,6 +851,7 @@
                 document.getElementById(showPage).classList.add('active');
             }
             
+            // Initial view
             toggleView('welcome-page');
         });
     </script>
