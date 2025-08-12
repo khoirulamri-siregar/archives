@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archives</title>
+    <title>Red Team Archives</title>
     <style>
         :root {
             --dark-bg: #121212;
@@ -11,9 +11,10 @@
             --red-accent: #E53935;
             --text-color: #EEEEEE;
             --light-gray: #BDBDBD;
+            --main-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: var(--main-font);
             background-color: var(--dark-bg);
             color: var(--text-color);
             margin: 0;
@@ -25,7 +26,6 @@
             position: relative;
         }
         
-        /* Animated Background */
         body::before {
             content: '';
             position: absolute;
@@ -44,63 +44,16 @@
             100% { transform: scale(1); }
         }
 
-        .welcome-page, .main-page {
-            display: none;
-            width: 100%;
-            height: 100%;
-        }
-        .welcome-page.active {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(45deg, #121212, #2a2a2a, #121212);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite, fadeIn 0.5s ease-in-out;
-        }
-        .main-page.active {
+        .main-page {
             display: flex;
             flex: 1;
             position: relative;
         }
-        .welcome-page h1 {
-            font-size: 3.5rem;
-            color: var(--red-accent);
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-            letter-spacing: 2px;
-            animation: fadeIn 1s ease-in-out;
+        .main-page.hidden {
+            display: none;
         }
-        .welcome-page p {
-            font-size: 1.2rem;
-            margin-top: 0;
-            color: var(--light-gray);
-            margin-bottom: 25px;
-            animation: fadeIn 1.5s ease-in-out;
-        }
-        .welcome-search {
-            width: 80%;
-            max-width: 600px;
-            animation: fadeIn 2s ease-in-out;
-        }
-        #search-input, .welcome-search-input {
-            width: 100%;
-            padding: 15px 25px;
-            border: none;
-            background-color: #2c2c2c;
-            color: var(--text-color);
-            border-radius: 50px;
-            outline: none;
-            font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
-        }
-        #search-input:focus, .welcome-search-input:focus {
-            box-shadow: 0 0 15px var(--red-accent);
-            transform: scale(1.02);
-        }
-        
+
+        /* Sidebar Styles */
         .sidebar {
             width: 300px;
             flex-shrink: 0;
@@ -120,77 +73,102 @@
         .sidebar.active {
             transform: translateX(0);
         }
-        .main-content {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        .bug-module {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        .bug-module.active {
-            display: block;
-        }
-        .main-content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .bug-module h2 {
-            border-left: 4px solid var(--red-accent);
-            padding-left: 10px;
-            margin: 0;
-            font-size: 1.5rem;
-        }
-        .bug-section {
-            margin-top: 30px;
-        }
-        .bug-section h3 {
-            color: var(--red-accent);
-            font-size: 1.2rem;
-        }
-        pre {
-            background-color: var(--dark-card);
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        
-        /* Navigation Buttons */
-        .toggle-sidebar-button {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 5px;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-        .toggle-sidebar-button:hover {
-            color: var(--red-accent);
-        }
-
-        /* Bug List View as Cards */
         .sidebar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        #bug-list {
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--red-accent);
+        }
+        .sidebar-nav {
             list-style-type: none;
             padding: 0;
-            display: grid;
+            display: flex;
+            flex-direction: column;
             gap: 15px;
         }
-        #bug-list li {
+        .sidebar-nav li a {
+            background-color: var(--dark-card);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .sidebar-nav li a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+            background-color: #2c2c2c;
+        }
+        .sidebar-nav-icon {
+            font-size: 1.2rem;
+            color: var(--red-accent);
+        }
+        
+        #search-input {
+            width: calc(100% - 40px);
+            padding: 10px 15px;
+            border: none;
+            background-color: #2c2c2c;
+            color: var(--text-color);
+            border-radius: 5px;
+            outline: none;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            transition: margin-left 0.3s ease-in-out;
+            margin-left: 340px; 
+        }
+
+        /* Welcome Page Styles */
+        #welcome-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            padding: 20px;
+        }
+        #welcome-page h1 {
+            font-size: 3.5rem;
+            color: var(--red-accent);
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        #welcome-page p {
+            font-size: 1.2rem;
+            margin-top: 0;
+            color: var(--light-gray);
+            margin-bottom: 25px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* Bug List Styles */
+        #bug-list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding-top: 20px;
+        }
+        #bug-list-container .bug-card {
             background-color: var(--dark-card);
             padding: 20px;
             border-radius: 8px;
@@ -201,7 +179,7 @@
             flex-direction: column;
             animation: fadeIn 0.5s ease-in-out;
         }
-        #bug-list li:hover {
+        #bug-list-container .bug-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
             background-color: #2c2c2c;
@@ -224,8 +202,106 @@
             color: var(--light-gray);
             margin: 0;
         }
+
+        /* Bug Module & Roadmap Styles */
+        .content-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .content-container.active {
+            display: block;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+        .content-header h2 {
+            border-left: 4px solid var(--red-accent);
+            padding-left: 10px;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .bug-section {
+            margin-top: 30px;
+        }
+        .bug-section h3 {
+            color: var(--red-accent);
+            font-size: 1.2rem;
+        }
+        pre {
+            background-color: var(--dark-card);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
         
-        /* Animations */
+        .toggle-sidebar-button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+            transition: color 0.2s;
+            display: none; /* Hide on desktop */
+        }
+        .toggle-sidebar-button:hover {
+            color: var(--red-accent);
+        }
+
+        .roadmap-section {
+            margin-bottom: 40px;
+        }
+        .roadmap-section h3 {
+            font-size: 2rem;
+            border-left: 4px solid var(--red-accent);
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        .roadmap-level {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .roadmap-card {
+            background-color: var(--dark-card);
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .roadmap-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            background-color: #2c2c2c;
+        }
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--red-accent);
+            flex-shrink: 0;
+        }
+        .card-content {
+            flex-grow: 1;
+        }
+        .card-content h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+        }
+        .card-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -235,630 +311,844 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        
-        /* Mobile Specific */
+
+        /* Mobile Styles */
         @media (max-width: 768px) {
-            .welcome-page h1 {
-                font-size: 2.5rem;
-            }
-            .welcome-page p {
-                font-size: 1rem;
-            }
-            .welcome-search {
-                width: 90%;
-            }
-            .main-page.active {
+            .main-page {
                 display: block;
-            }
-            .main-content {
-                padding: 15px;
-            }
-            .bug-module h2 {
-                font-size: 1.2rem;
             }
             .sidebar {
                 width: 100%;
+                z-index: 1001;
             }
             .sidebar.active {
                 transform: translateX(0);
             }
-            #bug-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Desktop Specific */
-        @media (min-width: 769px) {
-            .sidebar {
-                transform: translateX(0);
-                position: relative;
-            }
             .main-content {
-                margin-left: 340px; /* Adjust based on sidebar width + padding */
-                width: auto;
+                margin-left: 0;
+                padding: 15px;
             }
-            .main-content-header .toggle-sidebar-button {
-                display: none;
-            }
-            .bug-module.active {
+            .toggle-sidebar-button {
                 display: block;
+            }
+            .content-header h2 {
+                font-size: 1.2rem;
+            }
+            #welcome-page h1 {
+                font-size: 2.5rem;
+            }
+            #welcome-page p {
+                font-size: 1rem;
+            }
+            .roadmap-section h3 {
+                font-size: 1.5rem;
+            }
+            .roadmap-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <div id="welcome-page" class="welcome-page active">
-        <h1>Archives</h1>
-        <p>Vulnerability Data.</p>
-        <div class="welcome-search">
-            <input type="text" id="welcome-search-input" class="welcome-search-input" placeholder="Cari bug, payload, atau kategori..." onkeyup="handleWelcomeSearch(event)">
-        </div>
-    </div>
-    
     <div id="main-page" class="main-page">
-        <div id="sidebar" class="sidebar">
+        <div id="sidebar" class="sidebar active">
             <div class="sidebar-header">
-                <h2>Daftar Bug</h2>
+                <h2>Red Team Archives</h2>
                 <button class="toggle-sidebar-button" onclick="toggleSidebar()">✕</button>
             </div>
-            <input type="text" id="search-input" class="welcome-search-input" placeholder="Cari bug..." onkeyup="filterBugs()">
-            <ul id="bug-list">
-                <li onclick="showBugModule('sqli')" data-category="SQLi">
-                    <div class="bug-card-title"><span class="icon">SQL</span> SQL Injection (SQLi)</div>
-                    <p class="bug-card-description">Menyuntikkan kode SQL berbahaya untuk mengontrol database.</p>
-                </li>
-                <li onclick="showBugModule('xss')" data-category="XSS">
-                    <div class="bug-card-title"><span class="icon">💻</span> Cross-Site Scripting (XSS)</div>
-                    <p class="bug-card-description">Menyuntikkan skrip berbahaya ke browser pengguna lain.</p>
-                </li>
-                <li onclick="showBugModule('lfi')" data-category="LFI/RFI">
-                    <div class="bug-card-title"><span class="icon">📁</span> Local File Inclusion (LFI)</div>
-                    <p class="bug-card-description">Membaca file sensitif dari server target.</p>
-                </li>
-                <li onclick="showBugModule('rce')" data-category="RCE">
-                    <div class="bug-card-title"><span class="icon">🔥</span> Remote Code Execution (RCE)</div>
-                    <p class="bug-card-description">Mengeksekusi perintah di server dari jarak jauh.</p>
-                </li>
-                <li onclick="showBugModule('csrf')" data-category="CSRF">
-                    <div class="bug-card-title"><span class="icon">🔗</span> Cross-Site Request Forgery (CSRF)</div>
-                    <p class="bug-card-description">Memaksa pengguna untuk mengirim permintaan yang tidak disengaja.</p>
-                </li>
-                <li onclick="showBugModule('ssrf')" data-category="SSRF">
-                    <div class="bug-card-title"><span class="icon">🌐</span> Server-Side Request Forgery (SSRF)</div>
-                    <p class="bug-card-description">Memaksa server untuk mengakses URL internal.</p>
-                </li>
-                <li onclick="showBugModule('idor')" data-category="IDOR">
-                    <div class="bug-card-title"><span class="icon">🔑</span> Insecure Direct Object Reference (IDOR)</div>
-                    <p class="bug-card-description">Mengakses data pengguna lain dengan manipulasi ID.</p>
-                </li>
-                <li onclick="showBugModule('auth-bypass')" data-category="Authentication Bypass">
-                    <div class="bug-card-title"><span class="icon">🔓</span> Authentication Bypass</div>
-                    <p class="bug-card-description">Melewati proses login untuk mendapatkan akses.</p>
-                </li>
-                <li onclick="showBugModule('file-upload')" data-category="File Upload">
-                    <div class="bug-card-title"><span class="icon">📤</span> File Upload Vulnerability</div>
-                    <p class="bug-card-description">Mengunggah file berbahaya untuk mengambil alih server.</p>
-                </li>
-                <li onclick="showBugModule('cmd-injection')" data-category="Command Injection">
-                    <div class="bug-card-title"><span class="icon">▶️</span> Command Injection</div>
-                    <p class="bug-card-description">Menjalankan perintah OS melalui input yang tidak divalidasi.</p>
-                </li>
-                <li onclick="showBugModule('open-redirect')" data-category="Open Redirect">
-                    <div class="bug-card-title"><span class="icon">➡️</span> Open Redirect</div>
-                    <p class="bug-card-description">Mengarahkan pengguna ke situs berbahaya melalui URL.</p>
-                </li>
-                <li onclick="showBugModule('broken-ac')" data-category="Broken Access Control">
-                    <div class="bug-card-title"><span class="icon">🛑</span> Broken Access Control</div>
-                    <p class="bug-card-description">Mengakses fitur yang seharusnya terbatas untuk role tertentu.</p>
-                </li>
-                <li onclick="showBugModule('info-disclosure')" data-category="Information Disclosure">
-                    <div class="bug-card-title"><span class="icon">📜</span> Information Disclosure</div>
-                    <p class="bug-card-description">Mengungkap data sensitif secara tidak sengaja.</p>
-                </li>
-                <li onclick="showBugModule('misconfig')" data-category="Security Misconfiguration">
-                    <div class="bug-card-title"><span class="icon">⚙️</span> Security Misconfiguration</div>
-                    <p class="bug-card-description">Kesalahan konfigurasi yang menyebabkan celah keamanan.</p>
-                </li>
-                <li onclick="showBugModule('xxe')" data-category="XXE">
-                    <div class="bug-card-title"><span class="icon">XML</span> XML External Entity (XXE)</div>
-                    <p class="bug-card-description">Memanfaatkan kelemahan pada parser XML.</p>
-                </li>
+            <ul class="sidebar-nav">
+                <li><a href="#" onclick="showContent('welcome')"><span class="sidebar-nav-icon">🏠</span>Halaman Awal</a></li>
+                <li><a href="#" onclick="showContent('bug-list')"><span class="sidebar-nav-icon">📑</span>Daftar Jenis Bug</a></li>
+                <li><a href="#" onclick="showContent('roadmap')"><span class="sidebar-nav-icon">🗺️</span>Peta Jalan Belajar</a></li>
             </ul>
         </div>
         
         <div class="main-content" id="main-content">
-            <div id="bug-module-sqli" class="bug-module active">
-                <div class="main-content-header">
+            <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
+
+            <div id="content-welcome" class="content-container active">
+                <div id="welcome-page">
+                    <h1>Red Team Archives</h1>
+                    <p>Perpustakaan pribadi tentang bug dan teknik keamanan.</p>
+                </div>
+            </div>
+
+            <div id="content-bug-list" class="content-container">
+                <div class="content-header">
+                    <h2>Daftar Jenis Bug</h2>
+                </div>
+                <input type="text" id="search-input" placeholder="Cari bug..." onkeyup="filterBugs()">
+                <div id="bug-list-container">
+                    <div class="bug-card" onclick="showBugModule('sqli')" data-category="SQLi">
+                        <div class="bug-card-title"><span class="icon">SQL</span> SQL Injection (SQLi)</div>
+                        <p class="bug-card-description">Menyuntikkan kode SQL berbahaya ke database.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('xss')" data-category="XSS">
+                        <div class="bug-card-title"><span class="icon">💻</span> Cross-Site Scripting (XSS)</div>
+                        <p class="bug-card-description">Menyuntikkan skrip ke browser pengguna lain.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('lfi')" data-category="LFI/RFI">
+                        <div class="bug-card-title"><span class="icon">📁</span> Local File Inclusion (LFI)</div>
+                        <p class="bug-card-description">Membaca file sensitif dari server.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('rce')" data-category="RCE">
+                        <div class="bug-card-title"><span class="icon">🔥</span> Remote Code Execution (RCE)</div>
+                        <p class="bug-card-description">Mengeksekusi perintah di server dari jarak jauh.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('csrf')" data-category="CSRF">
+                        <div class="bug-card-title"><span class="icon">🔗</span> Cross-Site Request Forgery (CSRF)</div>
+                        <p class="bug-card-description">Memaksa pengguna mengirim permintaan yang tidak disengaja.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('ssrf')" data-category="SSRF">
+                        <div class="bug-card-title"><span class="icon">🌐</span> Server-Side Request Forgery (SSRF)</div>
+                        <p class="bug-card-description">Memaksa server mengakses URL internal.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('idor')" data-category="IDOR">
+                        <div class="bug-card-title"><span class="icon">🔑</span> Insecure Direct Object Reference (IDOR)</div>
+                        <p class="bug-card-description">Mengakses data pengguna lain dengan manipulasi ID.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('auth-bypass')" data-category="Authentication Bypass">
+                        <div class="bug-card-title"><span class="icon">🔓</span> Authentication Bypass</div>
+                        <p class="bug-card-description">Melewati proses login untuk mendapatkan akses.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('file-upload')" data-category="File Upload">
+                        <div class="bug-card-title"><span class="icon">📤</span> File Upload Vulnerability</div>
+                        <p class="bug-card-description">Mengunggah file berbahaya untuk mengambil alih server.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('cmd-injection')" data-category="Command Injection">
+                        <div class="bug-card-title"><span class="icon">▶️</span> Command Injection</div>
+                        <p class="bug-card-description">Menjalankan perintah OS melalui input yang tidak divalidasi.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('open-redirect')" data-category="Open Redirect">
+                        <div class="bug-card-title"><span class="icon">➡️</span> Open Redirect</div>
+                        <p class="bug-card-description">Mengarahkan pengguna ke situs berbahaya.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('broken-ac')" data-category="Broken Access Control">
+                        <div class="bug-card-title"><span class="icon">🛑</span> Broken Access Control</div>
+                        <p class="bug-card-description">Mengakses fitur terbatas untuk role tertentu.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('info-disclosure')" data-category="Information Disclosure">
+                        <div class="bug-card-title"><span class="icon">📜</span> Information Disclosure</div>
+                        <p class="bug-card-description">Mengungkap data sensitif secara tidak sengaja.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('misconfig')" data-category="Security Misconfiguration">
+                        <div class="bug-card-title"><span class="icon">⚙️</span> Security Misconfiguration</div>
+                        <p class="bug-card-description">Kesalahan konfigurasi yang menyebabkan celah.</p>
+                    </div>
+                    <div class="bug-card" onclick="showBugModule('xxe')" data-category="XXE">
+                        <div class="bug-card-title"><span class="icon">XML</span> XML External Entity (XXE)</div>
+                        <p class="bug-card-description">Memanfaatkan kelemahan pada parser XML.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-roadmap" class="content-container">
+                <div class="content-header">
+                    <h2>Peta Jalan Belajar</h2>
+                </div>
+                <div class="roadmap-section">
+                    <h3>Tingkat Dasar (Basic)</h3>
+                    <div class="roadmap-level">
+                        <div class="roadmap-card" onclick="showBugModule('xss')">
+                            <div class="card-icon">💻</div>
+                            <div class="card-content">
+                                <h4>Cross-Site Scripting (XSS)</h4>
+                                <p>Kerentanan paling umum. Pelajari cara menyuntikkan skrip ke halaman web.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-card" onclick="showBugModule('csrf')">
+                            <div class="card-icon">🔗</div>
+                            <div class="card-content">
+                                <h4>Cross-Site Request Forgery (CSRF)</h4>
+                                <p>Pahami cara memaksa pengguna melakukan tindakan yang tidak mereka inginkan.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-card" onclick="showBugModule('idor')">
+                            <div class="card-icon">🔑</div>
+                            <div class="card-content">
+                                <h4>Insecure Direct Object Reference (IDOR)</h4>
+                                <p>Dasar-dasar kontrol akses. Pelajari cara mengakses data pengguna lain.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="roadmap-section">
+                    <h3>Tingkat Menengah (Intermediate)</h3>
+                    <div class="roadmap-level">
+                        <div class="roadmap-card" onclick="showBugModule('sqli')">
+                            <div class="card-icon">SQL</div>
+                            <div class="card-content">
+                                <h4>SQL Injection (SQLi)</h4>
+                                <p>Mempelajari cara memanipulasi database dengan menyuntikkan kode SQL.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-card" onclick="showBugModule('lfi')">
+                            <div class="card-icon">📁</div>
+                            <div class="card-content">
+                                <h4>Local File Inclusion (LFI)</h4>
+                                <p>Teknik lanjutan untuk membaca file sistem di server target.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-card" onclick="showBugModule('ssrf')">
+                            <div class="card-icon">🌐</div>
+                            <div class="card-content">
+                                <h4>Server-Side Request Forgery (SSRF)</h4>
+                                <p>Pahami cara memaksa server untuk mengirimkan permintaan internal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="roadmap-section">
+                    <h3>Tingkat Lanjut (Advanced)</h3>
+                    <div class="roadmap-level">
+                        <div class="roadmap-card" onclick="showBugModule('rce')">
+                            <div class="card-icon">🔥</div>
+                            <div class="card-content">
+                                <h4>Remote Code Execution (RCE)</h4>
+                                <p>Tingkat paling berbahaya. Pelajari cara mendapatkan kendali penuh atas server.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-card" onclick="showBugModule('file-upload')">
+                            <div class="card-icon">📤</div>
+                            <div class="card-content">
+                                <h4>File Upload Vulnerability</h4>
+                                <p>Kerentanan yang sering berujung pada RCE. Pahami bypass filter file.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-card" onclick="showBugModule('cmd-injection')">
+                            <div class="card-icon">▶️</div>
+                            <div class="card-content">
+                                <h4>Command Injection</h4>
+                                <p>Teknik untuk mengeksekusi perintah OS langsung di server.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-sqli" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: SQL Injection (SQLi)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> SQL Injection (SQLi) adalah kerentanan keamanan di mana penyerang memasukkan kode SQL berbahaya ke dalam input data yang tidak aman, yang kemudian dieksekusi oleh basis data. Dampaknya bisa berupa penguasaan basis data secara penuh.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Pencurian data sensitif, modifikasi atau penghapusan data, pengambilalihan akun administrator, hingga penolakan layanan (DoS).</p>
+                    <h3>1. Pengantar: Apa Itu SQLi?</h3>
+                    <p><strong>SQL Injection (SQLi)</strong> adalah teknik serangan yang menyuntikkan kode SQL berbahaya melalui input aplikasi. Tujuannya adalah untuk memanipulasi basis data (database) agar melakukan perintah yang tidak seharusnya. Ini adalah salah satu kerentanan web paling umum dan berbahaya.</p>
+                    <p><strong>Analoginya:</strong> Kamu meminta seorang penjaga toko untuk mengambilkan barang dengan menyebutkan namanya, tapi kamu menyelipkan perintah rahasia di tengah kalimatmu, seperti "ambilkan buku <strong>dan buka brankasnya</strong>". Penjaga toko, karena tidak terlatih, mengikuti semua perintahmu tanpa memisahkan yang mana perintah normal dan mana yang berbahaya.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>SQLi dibagi menjadi beberapa tipe, termasuk **In-band SQLi** (Error-based, Union-based) dan **Blind SQLi** (Boolean-based, Time-based).</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Ketika aplikasi web menerima input dari pengguna (misalnya, nama pengguna atau kata sandi), ia sering kali langsung memasukkannya ke dalam kueri SQL. Jika tidak ada validasi, penyerang dapat menyisipkan kode SQL mereka sendiri.</p>
+                    <p><strong>Dampak yang Ditimbulkan:</strong></p>
+                    <ul>
+                        <li><strong>Pencurian Data:</strong> Mengambil data sensitif seperti informasi pengguna, kata sandi, atau data kartu kredit.</li>
+                        <li><strong>Modifikasi Data:</strong> Mengubah atau menghapus data di database.</li>
+                        <li><strong>Penguasaan Penuh:</strong> Dalam kasus terparah, SQLi dapat digunakan untuk mendapatkan akses ke sistem operasi (RCE) jika database memiliki izin yang terlalu tinggi.</li>
+                    </ul>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Identifikasi input yang berinteraksi dengan database (form login, pencarian, parameter URL).</li>
-                        <li>Masukkan karakter <code>'</code> (kutip tunggal) ke dalam input. Jika muncul pesan error SQL, itu adalah indikasi kuat.</li>
-                        <li>Uji kondisi boolean, misalnya dengan memasukkan <code>' OR 1=1--</code> di kolom username dan perhatikan respons halaman.</li>
-                    </ol>
-                </div>
-                <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
-                    <p><strong>Payload dasar:</strong></p>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi SQLi:</strong></p>
+                    <p>Coba tambahkan karakter kutip tunggal (<code>'</code>) di parameter URL. Misalnya:
+                    <code>http://site.com/produk?id=1</code> menjadi <code>http://site.com/produk?id=1'</code>.
+                    Jika halaman error atau menampilkan hasil yang tidak terduga, itu bisa jadi indikasi SQLi.</p>
+                    
+                    <p><strong>B. Payload Eksploitasi:</strong></p>
+                    <p>Payload adalah kode yang disuntikkan. Beberapa contohnya:</p>
                     <pre><code>' OR 1=1--</code></pre>
-                    <p><strong>Payload bypass filter:</strong></p>
-                    <pre><code>' or 1=1/*</code></pre>
+                    <p>Payload ini akan selalu bernilai benar, sehingga bisa digunakan untuk bypass login.
+                    Tanda `--` adalah komentar di SQL, jadi sisa kueri akan diabaikan.</p>
+                    <pre><code>' UNION SELECT 1,2,3--</code></pre>
+                    <p>Payload ini digunakan untuk menggabungkan hasil kueri asli dengan kueri penyerang. Penyerang bisa mengganti `1,2,3` dengan nama kolom atau data sensitif yang ingin diambil.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Studi Kasus dan Proof of Concept (PoC)</h3>
-                    <p>Pada URL seperti <code>http://site.com/profile?id=1</code>, ubah menjadi <code>http://site.com/profile?id=1' OR 1=1--</code>. Jika halaman menampilkan data profil lain tanpa autentikasi, maka bug berhasil ditemukan.</p>
-                </div>
-                <div class="bug-section">
-                    <h3>Rekomendasi Mitigasi dan Perbaikan</h3>
-                    <p><strong>Cara developer memperbaiki bug:</strong> Menggunakan <strong>Prepared Statements</strong> atau <strong>Parameterized Queries</strong>. Ini memisahkan kode SQL dari input pengguna.</p>
-                    <p><strong>Praktik coding aman:</strong> Validasi semua input pengguna dan gunakan prinsip <em>least privilege</em> pada database user.</p>
-                </div>
-                <div class="bug-section">
-                    <h3>Severity & CVSS</h3>
-                    <p><strong>Klasifikasi tingkat risiko:</strong> SQLi hampir selalu <strong>High</strong> atau <strong>Critical</strong>.</p>
-                    <p><strong>Contoh scoring CVSS:</strong> 9.8 (Critical) dengan vektor <code>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code>.</p>
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Gunakan Prepared Statements:</strong> Ini adalah metode paling efektif. Kueri SQL dikirimkan ke database secara terpisah dari data pengguna, sehingga database tidak akan pernah menganggap input sebagai kode SQL.</li>
+                        <li><strong>Validasi Input:</strong> Selalu periksa dan sanitasi input dari pengguna. Pastikan data yang dimasukkan sesuai dengan format yang diharapkan (misalnya, angka untuk ID).</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-xss" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-xss" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Cross-Site Scripting (XSS)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> XSS adalah jenis kerentanan injeksi di mana penyerang menyuntikkan kode skrip berbahaya ke dalam halaman web yang dieksekusi oleh <em>browser</em> pengguna lain.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Pencurian data <em>cookie</em> dan sesi, pengalihan ke situs <em>phishing</em>, dan penyebaran <em>malware</em>.</p>
+                    <h3>1. Pengantar: Apa Itu XSS?</h3>
+                    <p><strong>Cross-Site Scripting (XSS)</strong> adalah kerentanan di mana penyerang menyuntikkan kode skrip berbahaya (biasanya JavaScript) ke dalam halaman web. Kode ini kemudian dieksekusi oleh browser pengguna lain, bukan server.</p>
+                    <p><strong>Analoginya:</strong> Kamu menulis pesan di papan pengumuman. Seseorang diam-diam menempelkan pesan kecil berisi instruksi "curang" di belakang pesanmu. Setiap orang yang membaca pesanmu, secara tidak sadar juga membaca dan mengikuti instruksi curang tersebut.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>XSS terbagi menjadi tiga tipe utama: **Reflected**, **Stored**, dan **DOM-based**.</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Ada tiga jenis XSS:</p>
+                    <ul>
+                        <li><strong>Reflected XSS:</strong> Skrip disuntikkan melalui URL dan hanya memengaruhi pengguna yang mengeklik URL tersebut.</li>
+                        <li><strong>Stored XSS:</strong> Skrip berbahaya disimpan di database (misalnya di kolom komentar) dan akan dieksekusi oleh setiap pengguna yang mengunjungi halaman tersebut.</li>
+                        <li><strong>DOM-based XSS:</strong> Terjadi ketika skrip dieksekusi oleh browser tanpa melalui server, sering kali karena manipulasi DOM (Document Object Model).</li>
+                    </ul>
+                    <p><strong>Dampak yang Ditimbulkan:</strong></p>
+                    <ul>
+                        <li><strong>Pencurian Cookie Sesi:</strong> Penyerang dapat mengambil cookie yang digunakan untuk login, lalu membajak akun pengguna.</li>
+                        <li><strong>Pengubahan Halaman Web:</strong> Mengubah konten halaman, seperti menyisipkan form login palsu (phishing).</li>
+                        <li><strong>Pengalihan Pengguna:</strong> Mengarahkan pengguna ke situs berbahaya.</li>
+                    </ul>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Identifikasi input yang menampilkan kembali data (komentar, pencarian, nama profil).</li>
-                        <li>Masukkan <em>payload</em> XSS dasar ke dalam input tersebut.</li>
-                        <li>Perhatikan apakah <em>browser</em> mengeksekusi kode tersebut (misalnya, muncul <em>alert box</em>).</li>
-                    </ol>
-                </div>
-                <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
-                    <p><strong>Payload dasar:</strong></p>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi XSS:</strong></p>
+                    <p>Cari fitur input seperti kolom pencarian, komentar, atau parameter URL yang menampilkan kembali input pengguna. Coba masukkan payload dasar seperti:</p>
                     <pre><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></pre>
-                    <p><strong>Payload bypass filter:</strong></p>
-                    <pre><code>&lt;img src=x onerror=alert(1)&gt;</code></pre>
+                    <p>Jika muncul pop-up alert di browser, itu adalah bukti XSS.</p>
+                    
+                    <p><strong>B. Payload Eksploitasi:</strong></p>
+                    <pre><code>&lt;img src=x onerror=alert(document.cookie)&gt;</code></pre>
+                    <p>Ini adalah payload yang sering digunakan untuk menghindari filter. Jika dieksekusi, ia akan menampilkan cookie sesi pengguna.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Studi Kasus dan Proof of Concept (PoC)</h3>
-                    <p>Pada sebuah halaman komentar, ketik <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code>. Jika setelah di-submit muncul <em>alert box</em> berisi <em>cookie</em>, maka itu adalah bukti <em>Stored XSS</em>.</p>
-                </div>
-                <div class="bug-section">
-                    <h3>Rekomendasi Mitigasi dan Perbaikan</h3>
-                    <p><strong>Cara developer memperbaiki bug:</strong> Terapkan <strong>sanitasi input</strong> dan **enkode output**. Sanitasi input menghapus karakter berbahaya, sedangkan enkode output memastikan data ditampilkan sebagai teks biasa.</p>
-                    <p><strong>Praktik coding aman:</strong> Gunakan <em>framework</em> dengan perlindungan XSS bawaan dan terapkan <em>Content Security Policy (CSP)</em>.</p>
-                </div>
-                <div class="bug-section">
-                    <h3>Severity & CVSS</h3>
-                    <p><strong>Klasifikasi tingkat risiko:</strong> XSS umumnya <strong>Medium</strong> hingga <strong>High</strong>.</p>
-                    <p><strong>Contoh scoring CVSS:</strong> 7.5 (High) dengan vektor <code>AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N</code>.</p>
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Output Encoding:</strong> Selalu enkode data yang dimasukkan pengguna sebelum menampilkannya di halaman. Ini mengubah karakter khusus menjadi entitas HTML agar tidak dieksekusi sebagai kode.</li>
+                        <li><strong>Sanitasi Input:</strong> Hapus atau netralkan karakter-karakter berbahaya dari input.</li>
+                        <li><strong>Content Security Policy (CSP):</strong> Gunakan header CSP untuk menginstruksikan browser agar hanya menjalankan skrip dari sumber yang terpercaya.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-lfi" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-lfi" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Local File Inclusion (LFI)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> File Inclusion adalah kerentanan yang memungkinkan penyerang menyertakan file, baik dari server lokal (LFI - Local File Inclusion) atau dari server eksternal (RFI - Remote File Inclusion).</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Membaca file sensitif di server (misalnya file konfigurasi), hingga eksekusi kode server (RCE).</p>
+                    <h3>1. Pengantar: Apa Itu LFI?</h3>
+                    <p><strong>Local File Inclusion (LFI)</strong> adalah kerentanan di mana penyerang dapat membaca file dari sistem lokal server melalui manipulasi input. Ini terjadi ketika aplikasi web menyertakan file berdasarkan parameter yang diberikan pengguna tanpa validasi yang benar.</p>
+                    <p><strong>Analoginya:</strong> Kamu bisa memesan makanan di menu dengan menyebutkan nama item, tapi kamu menemukan cara untuk menyebutkan "item di dapur belakang" dan server mengabulkan permintaanmu tanpa menyadari bahwa itu adalah area terlarang.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>Terdapat dua jenis utama: **Local File Inclusion (LFI)** yang menyertakan file dari sistem lokal, dan **Remote File Inclusion (RFI)** yang menyertakan file dari URL eksternal.</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>LFI sering kali terjadi pada fungsi yang bertugas menyertakan file, seperti `include()` di PHP. Ketika penyerang menyisipkan nama file sistem (misalnya, `/etc/passwd` di Linux) ke dalam parameter, aplikasi akan membaca file tersebut.</p>
+                    <p><strong>Dampak yang Ditimbulkan:</strong></p>
+                    <ul>
+                        <li><strong>Pembacaan File Sensitif:</strong> Penyerang dapat membaca file konfigurasi, kode sumber, atau data sensitif lainnya dari server.</li>
+                        <li><strong>Potensi RCE:</strong> Dengan menggabungkan LFI dengan kerentanan lain (seperti file upload), penyerang bisa mendapatkan eksekusi kode di server.</li>
+                    </ul>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Cari parameter URL yang merujuk pada file, misalnya <code>page.php?file=home.html</code>.</li>
-                        <li>Coba ganti nilai parameter dengan file sensitif, seperti <code>/etc/passwd</code> atau <code>../../../../../../etc/passwd</code> (untuk LFI).</li>
-                        <li>Untuk RFI, coba sertakan URL eksternal, seperti <code>http://website.com/cmd.txt</code>.</li>
-                    </ol>
-                </div>
-                <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
-                    <p><strong>Payload dasar LFI:</strong></p>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi LFI:</strong></p>
+                    <p>Cari parameter URL yang mengarahkan ke file, seperti `page=`, `file=`, atau `halaman=`. Contohnya:
+                    <code>http://site.com/index.php?page=konten.php</code></p>
+                    
+                    <p><strong>B. Payload Eksploitasi:</strong></p>
+                    <p>Coba ganti nilai parameter dengan jalur file sistem menggunakan traversal direktori (`../`).</p>
                     <pre><code>../../../../etc/passwd</code></pre>
-                    <p><strong>Payload bypass filter:</strong></p>
+                    <p>Payload ini akan mencoba keluar dari direktori web server dan membaca file `passwd` yang berisi daftar pengguna sistem.</p>
                     <pre><code>....//....//....//....//etc/passwd</code></pre>
+                    <p>Payload ini adalah variasi untuk melewati filter sederhana yang menghapus `../`.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Studi Kasus dan Proof of Concept (PoC)</h3>
-                    <p>Pada URL <code>http://site.com/index.php?file=konten.php</code>, ubah menjadi <code>http://site.com/index.php?file=../../../../etc/passwd</code>. Jika isi file password server muncul, maka LFI berhasil.</p>
-                </div>
-                <div class="bug-section">
-                    <h3>Rekomendasi Mitigasi dan Perbaikan</h3>
-                    <p><strong>Cara developer memperbaiki bug:</strong> Gunakan daftar file yang diizinkan (<em>whitelist</em>) dan hindari penggunaan input pengguna dalam fungsi `include()` atau `require()`. Jangan izinkan *remote file inclusion*.</p>
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Gunakan Whitelist:</strong> Buat daftar file yang diizinkan untuk diakses. Abaikan semua permintaan lain.</li>
+                        <li><strong>Validasi Input:</strong> Hapus semua karakter yang tidak diinginkan dari input pengguna, seperti `..` atau `/`.</li>
+                        <li><strong>Jadikan Fungsi Include Statis:</strong> Sebisa mungkin, hindari menyertakan file berdasarkan input pengguna.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-rce" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-rce" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Remote Code Execution (RCE)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> RCE adalah kerentanan yang memungkinkan penyerang mengeksekusi kode atau perintah sewenang-wenang di server dari jarak jauh.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> RCE adalah salah satu bug paling parah. Dampaknya bisa berupa penguasaan penuh server, pencurian data, hingga penggunaan server untuk serangan lain.</p>
+                    <h3>1. Pengantar: Apa Itu RCE?</h3>
+                    <p><strong>Remote Code Execution (RCE)</strong> adalah kerentanan keamanan paling parah di mana penyerang dapat mengeksekusi perintah di server dari jarak jauh. Ini memberikan penyerang kendali penuh atas server target.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>RCE dapat terjadi melalui **Command Injection**, **Code Injection**, atau kerentanan lain yang memungkinkan penyerang mengirimkan dan menjalankan kode di sistem target.</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>RCE terjadi ketika aplikasi web menjalankan input pengguna sebagai perintah sistem operasi atau kode pemrograman tanpa validasi yang ketat. Ini bisa terjadi melalui kerentanan lain seperti <strong>Command Injection</strong> atau <strong>File Upload</strong>. Setelah mendapatkan RCE, penyerang bisa melakukan apa saja di server, seperti: menginstal malware, mencuri data, atau menggunakan server sebagai basis untuk menyerang jaringan lain.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Cari fungsi yang mengeksekusi input pengguna, seperti <code>exec()</code>, <code>system()</code>, atau <code>eval()</code>.</li>
-                        <li>Masukkan perintah dasar seperti <code>whoami</code> atau <code>ls</code> yang dibungkus dalam sintaks yang tepat.</li>
-                    </ol>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi RCE:</strong></p>
+                    <p>Cari fitur yang berinteraksi dengan sistem operasi, misalnya fitur `ping` atau `diagnostik jaringan`. Coba masukkan perintah dasar yang dipisahkan oleh karakter khusus.</p>
+                    
+                    <p><strong>B. Payload Eksploitasi:</strong></p>
+                    <p>Menggunakan karakter pemisah perintah seperti `|`, `&`, atau `;`:</p>
+                    <pre><code>127.0.0.1; ls -la</code></pre>
+                    <p>Jika `ls -la` dieksekusi, penyerang akan melihat daftar file di server. Ini adalah bukti adanya kerentanan.</p>
+                    <pre><code>127.0.0.1 && whoami</code></pre>
+                    <p>`whoami` akan menampilkan nama pengguna yang sedang menjalankan web server.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
-                    <p><strong>Payload dasar:</strong></p>
-                    <pre><code>;id;</code> (untuk bash)</pre>
-                    <pre><code>;whoami</code> (untuk bash)</pre>
-                </div>
-                <div class="bug-section">
-                    <h3>Studi Kasus dan Proof of Concept (PoC)</h3>
-                    <p>Dalam form *command* di sebuah aplikasi, ketik <code>;ls -la</code>. Jika daftar file di server muncul, maka RCE berhasil.</p>
-                </div>
-                <div class="bug-section">
-                    <h3>Rekomendasi Mitigasi dan Perbaikan</h3>
-                    <p><strong>Cara developer memperbaiki bug:</strong> Hindari penggunaan fungsi yang mengeksekusi perintah shell. Jika harus digunakan, pastikan semua input pengguna divalidasi dan di-sanitasi dengan sangat ketat.</p>
-                </div>
-                <div class="bug-section">
-                    <h3>Severity & CVSS</h3>
-                    <p><strong>Klasifikasi tingkat risiko:</strong> RCE selalu <strong>Critical</strong>.</p>
-                    <p><strong>Contoh scoring CVSS:</strong> 9.8 (Critical) dengan vektor <code>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code>.</p>
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Hindari Fungsi Berbahaya:</strong> Jangan gunakan fungsi seperti `eval()`, `system()`, atau `exec()` dengan input pengguna.</li>
+                        <li><strong>Whitelist Input:</strong> Jika memang harus menggunakan perintah sistem, gunakan daftar input yang diizinkan (misalnya, hanya izinkan angka atau alamat IP).</li>
+                    </ul>
                 </div>
             </div>
-            
-            <div id="bug-module-csrf" class="bug-module">
-                <div class="main-content-header">
+
+            <div id="content-csrf" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Cross-Site Request Forgery (CSRF)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> CSRF adalah serangan yang memaksa pengguna terautentikasi untuk mengirimkan permintaan yang tidak disengaja ke server web yang rentan.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Mengubah kata sandi, melakukan transfer dana, atau mengirimkan data atas nama pengguna tanpa persetujuan.</p>
+                    <h3>1. Pengantar: Apa Itu CSRF?</h3>
+                    <p><strong>Cross-Site Request Forgery (CSRF)</strong> adalah serangan yang memaksa pengguna yang sudah terautentikasi (sudah login) untuk melakukan tindakan yang tidak mereka inginkan di sebuah situs web yang rentan.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>CSRF tidak memiliki jenis yang berbeda, tetapi bisa terjadi pada berbagai jenis permintaan HTTP (GET, POST, dll) dan memiliki tingkat dampak yang berbeda.</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Penyerang mengirimkan link atau gambar berbahaya yang berisi permintaan HTTP. Ketika pengguna yang sudah login mengklik link tersebut, browser-nya akan otomatis menyertakan cookie sesi mereka dan mengirimkan permintaan berbahaya ke situs web yang rentan, seolah-olah permintaan itu datang dari pengguna yang sah.</p>
+                    <p><strong>Dampak yang Ditimbulkan:</strong></p>
+                    <ul>
+                        <li>Mengubah kata sandi pengguna.</li>
+                        <li>Melakukan transfer dana dari rekening pengguna.</li>
+                        <li>Mengirimkan pesan atau postingan atas nama pengguna.</li>
+                    </ul>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Identifikasi permintaan yang sensitif (misalnya, form ganti password).</li>
-                        <li>Tangkap permintaan tersebut menggunakan proxy seperti <strong>Burp Suite</strong> atau <strong>OWASP ZAP</strong>.</li>
-                        <li>Cek apakah permintaan tersebut berisi <strong>token anti-CSRF</strong> yang unik. Jika tidak ada, kemungkinan rentan.</li>
-                    </ol>
-                </div>
-                
-                <div class="bug-section">
-                    <h3>Studi Kasus dan Proof of Concept (PoC)</h3>
-                    <p>Buat halaman HTML sederhana dengan form yang mengarah ke URL tindakan sensitif (misalnya, `gantipassword.php`). Jika pengguna yang sudah login mengunjungi halaman ini, permintaan akan terkirim secara otomatis.</p>
-                </div>
-
-                <div class="bug-section">
-                    <h3>Rekomendasi Mitigasi dan Perbaikan</h3>
-                    <p><strong>Cara developer memperbaiki bug:</strong> Implementasikan <strong>token anti-CSRF</strong> unik untuk setiap sesi. Token ini harus diverifikasi di sisi server.</p>
-                    <p><strong>Praktik coding aman:</strong> Gunakan atribut <code>SameSite=Lax</code> atau <code>SameSite=Strict</code> pada cookie.</p>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi CSRF:</strong></p>
+                    <p>Cari form yang melakukan tindakan sensitif (misalnya, form ganti password). Periksa apakah form tersebut memiliki <strong>token CSRF</strong> yang unik dan acak.</p>
+                    
+                    <p><strong>B. POC Eksploitasi:</strong></p>
+                    <p>Buat halaman HTML sederhana yang berisi form tersembunyi yang akan mengirimkan permintaan jahat ke situs rentan saat halaman dimuat.</p>
+                    <pre><code>&lt;html&gt;
+    &lt;body onload="document.forms[0].submit()"&gt;
+        &lt;form action="http://situs-rentan.com/ganti-password" method="POST"&gt;
+            &lt;input type="hidden" name="password_baru" value="hacked123"&gt;
+        &lt;/form&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
                 </div>
                 <div class="bug-section">
-                    <h3>Severity & CVSS</h3>
-                    <p><strong>Klasifikasi tingkat risiko:</strong> CSRF umumnya <strong>Medium</strong> hingga <strong>High</strong>. Dampaknya tergantung pada sensitivitas tindakan yang dapat dieksploitasi.</p>
-                    <p><strong>Contoh scoring CVSS:</strong> 8.8 (High) dengan vektor <code>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</code>.</p>
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Gunakan Token Anti-CSRF:</strong> Ini adalah cara paling efektif. Tambahkan token unik dan acak untuk setiap form dan verifikasi di sisi server.</li>
+                        <li><strong>Header `SameSite`:</strong> Gunakan atribut `SameSite=Lax` atau `SameSite=Strict` pada cookie sesi untuk mencegah browser mengirimkan cookie dalam permintaan cross-site.</li>
+                    </ul>
                 </div>
             </div>
-            
-            <div id="bug-module-ssrf" class="bug-module">
-                <div class="main-content-header">
+
+            <div id="content-ssrf" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Server-Side Request Forgery (SSRF)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> SSRF terjadi ketika aplikasi web tidak memvalidasi URL yang diberikan oleh pengguna, sehingga penyerang dapat memaksa server untuk membuat permintaan HTTP ke URL internal atau eksternal yang tidak semestinya.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Membocorkan informasi internal server, memindai jaringan internal, atau melakukan serangan Denial of Service (DoS).</p>
+                    <h3>1. Pengantar: Apa Itu SSRF?</h3>
+                    <p><strong>Server-Side Request Forgery (SSRF)</strong> adalah kerentanan di mana penyerang dapat memaksa server web untuk mengirimkan permintaan ke URL yang ditentukan oleh penyerang. Ini berbeda dari CSRF karena serangan ini terjadi di sisi server.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>SSRF dibagi menjadi dua jenis utama: **Basic SSRF** (server merespons dengan hasil dari permintaan) dan **Blind SSRF** (server tidak memberikan respons langsung, sehingga memerlukan teknik out-of-band).</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>SSRF terjadi ketika aplikasi web mengambil URL dari input pengguna dan kemudian mengambil data dari URL tersebut tanpa validasi yang memadai. Penyerang bisa menyisipkan URL yang mengarah ke server internal, API internal, atau bahkan file lokal.</p>
+                    <p><strong>Dampak yang Ditimbulkan:</strong></p>
+                    <ul>
+                        <li>Mengakses layanan internal yang seharusnya tidak terekspos ke internet.</li>
+                        <li>Memindai port dan layanan di jaringan internal server.</li>
+                        <li>Membaca file sensitif melalui skema URL seperti `file://`.</li>
+                    </ul>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Identifikasi input yang menerima URL, misalnya parameter `url=` atau `image_url=`.</li>
-                        <li>Coba ganti URL dengan URL internal server, seperti <code>http://localhost</code> atau <code>127.0.0.1</code>.</li>
-                        <li>Jika server merespons dengan isi file, itu adalah tanda SSRF.</li>
-                    </ol>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi SSRF:</strong></p>
+                    <p>Cari parameter URL yang mengambil URL lain sebagai input, misalnya:
+                    `http://site.com/image_proxy?url=...`</p>
+                    
+                    <p><strong>B. Payload Eksploitasi:</strong></p>
+                    <pre><code>http://site.com/image_proxy?url=http://127.0.0.1</code></pre>
+                    <p>Payload ini akan memaksa server untuk mengakses dirinya sendiri. Jika server merespons dengan konten halaman utama, itu adalah bukti SSRF.</p>
+                    <pre><code>http://site.com/image_proxy?url=file:///etc/passwd</code></pre>
+                    <p>Payload ini mencoba membaca file `passwd` di server.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
-                    <p><strong>Payload dasar:</strong></p>
-                    <pre><code>http://localhost</code></pre>
-                    <pre><code>file:///etc/passwd</code></pre>
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Validasi Input:</strong> Lakukan validasi ketat pada URL yang diberikan pengguna. Gunakan daftar izin (whitelist) untuk host dan protokol yang diizinkan.</li>
+                        <li><strong>Jangan Izinkan Redirect:</strong> Matikan fitur `redirect` otomatis pada permintaan HTTP dari sisi server.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-idor" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-idor" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Insecure Direct Object Reference (IDOR)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> IDOR terjadi ketika aplikasi web menggunakan input pengguna untuk mengakses objek secara langsung, seperti ID file atau ID pengguna, tanpa melakukan validasi akses yang memadai.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Membaca, mengubah, atau menghapus data milik pengguna lain dengan hanya mengubah parameter URL atau form.</p>
+                    <h3>1. Pengantar: Apa Itu IDOR?</h3>
+                    <p><strong>Insecure Direct Object Reference (IDOR)</strong> adalah kerentanan di mana penyerang dapat mengakses objek (misalnya file, data, atau akun pengguna) dengan mengubah nilai parameter yang mengacu pada objek tersebut, tanpa ada validasi otorisasi.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Identifikasi parameter yang merujuk pada objek, misalnya `profile?id=123`.</li>
-                        <li>Ubah ID tersebut menjadi ID lain yang mungkin, seperti `id=124` atau `id=1`.</li>
-                        <li>Jika kamu bisa melihat data pengguna lain, itu adalah IDOR.</li>
-                    </ol>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Ketika aplikasi web menggunakan ID yang bisa ditebak atau diubah (misalnya ID pengguna `123`, `124`, `125`), penyerang bisa mencoba mengubah ID tersebut. Jika server tidak memverifikasi apakah pengguna saat ini berhak mengakses ID tersebut, maka penyerang bisa melihat data milik pengguna lain.</p>
+                    <p><strong>Dampak yang Ditimbulkan:</strong></p>
+                    <ul>
+                        <li>Mengakses, mengubah, atau menghapus data pengguna lain.</li>
+                        <li>Mengambil alih akun pengguna lain.</li>
+                        <li>Mendapatkan akses ke informasi yang seharusnya terbatas.</li>
+                    </ul>
                 </div>
                 <div class="bug-section">
-                    <h3>Contoh POC</h3>
-                    <p>Pada URL untuk melihat invoice, <code>/invoice?id=100</code>, coba ubah menjadi <code>/invoice?id=101</code>. Jika invoice pengguna lain dapat dilihat, maka kerentanan IDOR terdeteksi.</p>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi IDOR:</strong></p>
+                    <p>Lakukan tindakan di web dan perhatikan parameter URL atau form. Contoh:
+                    `http://site.com/profile?id=123`</p>
+                    
+                    <p><strong>B. POC Eksploitasi:</strong></p>
+                    <p>Ubah nilai `id` menjadi nilai lain yang mungkin, misalnya `id=124` atau `id=1`. Jika kamu bisa melihat profil milik pengguna lain tanpa login sebagai mereka, maka IDOR berhasil ditemukan.</p>
+                    <p>IDOR tidak hanya terbatas pada URL, bisa juga pada permintaan API, seperti:</p>
+                    <pre><code>POST /api/user/123/edit</code></pre>
+                    <p>Dengan mengganti `123` menjadi `124` dalam permintaan POST, penyerang bisa mengubah data pengguna lain.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Gunakan Mekanisme Kontrol Akses:</strong> Sebelum menampilkan atau mengubah data, selalu verifikasi bahwa pengguna yang sedang login memiliki hak untuk mengakses ID tersebut.</li>
+                        <li><strong>Gunakan ID yang Sulit Ditebak:</strong> Gunakan UUID (Universally Unique Identifier) yang panjang dan acak, bukan ID numerik yang berurutan.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-auth-bypass" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-auth-bypass" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Authentication Bypass</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> Authentication Bypass adalah jenis kerentanan di mana penyerang dapat melewati mekanisme otentikasi suatu aplikasi web, seperti form login, untuk mendapatkan akses ke akun pengguna atau area terlarang.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Pengambilalihan akun pengguna, akses ke panel admin, atau akses ke data sensitif tanpa kredensial yang sah.</p>
+                    <h3>1. Pengantar: Apa Itu Authentication Bypass?</h3>
+                    <p><strong>Authentication Bypass</strong> adalah kerentanan yang memungkinkan penyerang untuk melewati mekanisme login atau otentikasi suatu aplikasi web dan mendapatkan akses ke akun pengguna atau area yang seharusnya terlarang, seperti panel admin.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>Authentication Bypass bisa terjadi melalui berbagai cara, seperti **SQL Injection**, **Session Fixation**, atau manipulasi parameter URL.</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Authentication Bypass terjadi karena berbagai alasan, seperti validasi input yang lemah (misalnya, SQLi), manipulasi cookie atau sesi, atau logika aplikasi yang cacat. Dampak dari serangan ini sangat serius, termasuk pengambilalihan akun dan akses penuh ke data atau fungsi yang seharusnya terlindungi.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Coba masukkan payload SQLi di form login, seperti <code>' OR 1=1--</code>.</li>
-                        <li>Coba akses URL admin secara langsung, misalnya <code>/admin</code>.</li>
-                        <li>Periksa apakah aplikasi melakukan validasi sesi dengan benar.</li>
-                    </ol>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi Authentication Bypass:</strong></p>
+                    <p>Coba gunakan payload SQLi sederhana pada form login. Jika berhasil, kamu bisa login tanpa kata sandi yang benar. Selain itu, coba akses halaman yang seharusnya dilindungi tanpa login.</p>
+                    
+                    <p><strong>B. POC Eksploitasi:</strong></p>
+                    <pre><code>Username: ' OR 1=1--
+Password: (apapun)</code></pre>
+                    <p>Payload ini akan membuat kueri SQL selalu bernilai benar, sehingga kamu bisa login sebagai pengguna pertama di database (seringkali admin).</p>
+                    <pre><code>http://site.com/admin_dashboard</code></pre>
+                    <p>Coba akses langsung URL ini. Jika berhasil, maka tidak ada kontrol akses yang benar.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Gunakan Prepared Statements:</strong> Mencegah SQLi yang sering menjadi penyebab bypass.</li>
+                        <li><strong>Validasi Hak Akses:</strong> Selalu verifikasi hak akses di sisi server untuk setiap halaman yang dilindungi.</li>
+                        <li><strong>Kelola Sesi dengan Aman:</strong> Gunakan sesi yang kuat dan tidak bisa ditebak.</li>
+                    </ul>
                 </div>
             </div>
-            
-            <div id="bug-module-file-upload" class="bug-module">
-                <div class="main-content-header">
+
+            <div id="content-file-upload" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: File Upload Vulnerability</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> Kerentanan File Upload terjadi ketika aplikasi web mengizinkan pengguna mengunggah file tanpa validasi yang memadai. Penyerang dapat mengunggah file berbahaya (misalnya, shell) untuk mendapatkan Remote Code Execution (RCE) di server.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> RCE, deface situs web, atau pencurian data.</p>
+                    <h3>1. Pengantar: Apa Itu File Upload Vulnerability?</h3>
+                    <p><strong>File Upload Vulnerability</strong> adalah kerentanan yang terjadi ketika aplikasi web mengizinkan pengguna mengunggah file tanpa validasi yang memadai. Penyerang dapat mengunggah file berbahaya (misalnya, skrip shell) untuk mendapatkan Remote Code Execution (RCE) di server.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Identifikasi fitur unggah file.</li>
-                        <li>Coba unggah file dengan ekstensi berbahaya, seperti `.php`, `.jsp`, atau `.asp`.</li>
-                        <li>Coba unggah file dengan ekstensi ganda, misalnya `file.jpg.php`.</li>
-                        <li>Gunakan Burp Suite untuk memanipulasi Content-Type header dari `image/jpeg` menjadi `text/plain`.</li>
-                    </ol>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Kerentanan ini sering terjadi karena aplikasi hanya memeriksa ekstensi file di sisi klien (frontend) atau memiliki blacklist ekstensi yang tidak lengkap. Penyerang dapat mengunggah skrip berbahaya dan kemudian mengaksesnya melalui URL, sehingga skrip tersebut dieksekusi di server.</p>
+                    <p><strong>Dampak yang Ditimbulkan:</strong></p>
+                    <ul>
+                        <li><strong>Remote Code Execution (RCE)</strong>: Ini adalah dampak terburuk.</li>
+                        <li><strong>Deface Website</strong>: Mengubah tampilan situs.</li>
+                        <li><strong>Pencurian Data</strong>: Mengunggah skrip untuk mencuri data dari server.</li>
+                    </ul>
                 </div>
                 <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi File Upload Vulnerability:</strong></p>
+                    <p>Cari fitur unggah file, seperti unggah foto profil atau lampiran. Coba unggah file dengan ekstensi berbahaya.</p>
+                    
+                    <p><strong>B. Payload Eksploitasi:</strong></p>
+                    <p>Unggah file yang berisi skrip PHP sederhana, misalnya `shell.php`:</p>
                     <pre><code>&lt;?php system($_GET['cmd']); ?&gt;</code></pre>
+                    <p>Setelah file diunggah, akses file tersebut di browser dengan menambahkan perintah: `http://site.com/uploads/shell.php?cmd=whoami`. Jika output perintah `whoami` muncul, kerentanan berhasil dieksploitasi.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Validasi di Sisi Server:</strong> Lakukan validasi ekstensi, ukuran, dan tipe file di sisi server.</li>
+                        <li><strong>Gunakan Whitelist:</strong> Izinkan hanya ekstensi file yang benar-benar dibutuhkan, seperti `.jpg`, `.png`, atau `.pdf`.</li>
+                        <li><strong>Ubah Nama File:</strong> Ubah nama file yang diunggah menjadi nama acak yang sulit ditebak.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-cmd-injection" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-cmd-injection" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Command Injection</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> Command Injection adalah kerentanan di mana penyerang dapat mengeksekusi perintah pada sistem operasi host melalui input yang tidak divalidasi, seperti form atau parameter URL.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Sama dengan RCE. Penyerang dapat mengontrol server sepenuhnya.</p>
+                    <h3>1. Pengantar: Apa Itu Command Injection?</h3>
+                    <p><strong>Command Injection</strong> adalah serangan di mana penyerang dapat mengeksekusi perintah pada sistem operasi host melalui input yang tidak divalidasi. Serangan ini sering berujung pada <strong>Remote Code Execution (RCE)</strong>.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Cari parameter yang memproses perintah sistem, misalnya fitur ping.</li>
-                        <li>Masukkan payload dengan pemisah perintah, seperti `ip=127.0.0.1; ls`.</li>
-                        <li>Perhatikan output yang dihasilkan. Jika ada daftar file, berarti berhasil.</li>
-                    </ol>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Kerentanan ini terjadi ketika aplikasi web mengambil input dari pengguna dan meneruskannya langsung ke fungsi sistem operasi. Dengan menggunakan karakter khusus seperti `|`, `;`, atau `&`, penyerang dapat "menyambung" perintah mereka sendiri.</p>
+                    <p><strong>Dampak yang Ditimbulkan:</strong> Sama dengan RCE. Penyerang dapat mengontrol server sepenuhnya, membaca, mengubah, atau menghapus file sistem.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
-                    <p><strong>Payload dasar:</strong></p>
-                    <pre><code>; ls</code></pre>
-                    <pre><code>| whoami</code></pre>
-                    <pre><code>&amp;&amp; cat /etc/passwd</code></pre>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi Command Injection:</strong></p>
+                    <p>Cari fitur di web yang menjalankan perintah sistem, seperti fitur "Ping" yang memproses alamat IP.</p>
+                    
+                    <p><strong>B. Payload Eksploitasi:</strong></p>
+                    <pre><code>127.0.0.1; ls -la</code></pre>
+                    <p>Pada fitur ping, coba masukkan payload di atas. Tanda `;` akan memisahkan perintah `ping` dari perintah `ls -la`. Jika output `ls -la` muncul, berarti server rentan.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Hindari Fungsi Berbahaya:</strong> Jangan gunakan fungsi seperti `system()` atau `exec()` dengan input pengguna.</li>
+                        <li><strong>Gunakan API Aman:</strong> Gunakan API yang aman untuk berinteraksi dengan sistem operasi, seperti `proc_open()` di PHP yang memiliki lebih banyak kontrol.</li>
+                        <li><strong>Validasi Input:</strong> Gunakan whitelist untuk karakter yang diizinkan.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-open-redirect" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-open-redirect" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Open Redirect</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> Open Redirect adalah kerentanan di mana aplikasi web mengizinkan penyerang untuk memanipulasi parameter URL yang digunakan untuk redirect pengguna ke URL eksternal yang berbahaya.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Digunakan untuk serangan phishing yang menipu pengguna agar berpikir mereka berada di situs yang sah.</p>
+                    <h3>1. Pengantar: Apa Itu Open Redirect?</h3>
+                    <p><strong>Open Redirect</strong> adalah kerentanan di mana aplikasi web mengizinkan penyerang untuk memanipulasi parameter URL yang digunakan untuk redirect pengguna ke URL eksternal yang berbahaya. Kerentanan ini sering digunakan dalam serangan phishing.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Cari parameter URL seperti `redirect=`, `url=`, atau `next=`.</li>
-                        <li>Coba ganti nilainya dengan URL situs berbahaya, misalnya `http://google.com`.</li>
-                        <li>Jika kamu dialihkan ke URL tersebut, maka bug ini terdeteksi.</li>
-                    </ol>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Beberapa aplikasi web memiliki fitur yang mengalihkan pengguna ke halaman lain setelah suatu tindakan selesai. Jika URL tujuan diambil langsung dari input pengguna tanpa divalidasi, penyerang bisa mengalihkan korban ke situs phishing yang terlihat mirip dengan situs aslinya.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Payload Aman dan Efektif</h3>
-                    <p><strong>Payload dasar:</strong></p>
-                    <pre><code>https://www.google.com</code></pre>
-                    <pre><code>//www.google.com</code></pre>
-                    <p><strong>Catatan:</strong> Banyak situs menggunakan validasi yang ketat. Kamu bisa coba berbagai variasi untuk bypass filter.</p>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi Open Redirect:</strong></p>
+                    <p>Cari parameter URL seperti `redirect=`, `url=`, `next=`, atau `halaman=`. Contoh:
+                    `http://site.com/login?redirect=/dashboard`</p>
+                    
+                    <p><strong>B. POC Eksploitasi:</strong></p>
+                    <p>Ganti URL redirect dengan situs berbahaya:</p>
+                    <pre><code>http://site.com/login?redirect=http://situs-phishing.com</code></pre>
+                    <p>Jika kamu dialihkan ke situs phishing, kerentanan berhasil ditemukan.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Gunakan Whitelist URL:</strong> Buat daftar URL yang diizinkan untuk redirect.</li>
+                        <li><strong>Validasi dan Enkode Input:</strong> Pastikan URL yang diterima sesuai format yang aman.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-broken-ac" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-broken-ac" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Broken Access Control</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
                 <div class="bug-section">
-                    <h3>Pendahuluan</h3>
-                    <p><strong>Definisi bug:</strong> Broken Access Control adalah kerentanan di mana pengguna yang tidak sah dapat mengakses fungsionalitas atau data yang seharusnya terbatas untuk pengguna lain, seperti admin.</p>
-                    <p><strong>Risiko dan dampak keamanan:</strong> Pengungkapan data sensitif, modifikasi atau penghapusan data pengguna lain, hingga pengambilalihan akun administrator.</p>
+                    <h3>1. Pengantar: Apa Itu Broken Access Control?</h3>
+                    <p><strong>Broken Access Control</strong> adalah kerentanan di mana aplikasi web gagal untuk mengontrol hak akses pengguna dengan benar. Ini memungkinkan pengguna biasa untuk mengakses fungsi atau data yang seharusnya hanya dapat diakses oleh pengguna dengan hak istimewa (misalnya, administrator).</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Jenis-Jenis Bug</h3>
-                    <p>Banyak jenisnya, termasuk **Horizontal Privilege Escalation** (mengakses data pengguna lain) dan **Vertical Privilege Escalation** (mendapatkan akses admin).</p>
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Ini terjadi karena aplikasi tidak memverifikasi hak akses pengguna saat ia mencoba mengakses suatu sumber daya. Dampaknya bisa sangat serius, mulai dari pengungkapan data sensitif hingga pengambilalihan penuh akun admin.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Cara Manual Menemukan Bug</h3>
-                    <p><strong>Step-by-step testing manual:</strong></p>
-                    <ol>
-                        <li>Login sebagai pengguna biasa (user A).</li>
-                        <li>Cari URL yang mengarah ke area sensitif, misalnya `dashboard-admin`.</li>
-                        <li>Coba akses URL tersebut. Jika berhasil, itu adalah Broken Access Control.</li>
-                    </ol>
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi Broken Access Control:</strong></p>
+                    <p>Login sebagai pengguna biasa. Coba akses URL atau fitur yang kamu tahu seharusnya hanya bisa diakses oleh admin, misalnya `http://site.com/admin/settings`.</p>
+                    
+                    <p><strong>B. POC Eksploitasi:</strong></p>
+                    <p>Gunakan IDOR (IDOR adalah salah satu bentuk Broken Access Control) untuk melihat data pengguna lain. Misalnya, di URL `http://site.com/api/v1/user/123`, ganti `123` dengan `1`. Jika kamu bisa melihat data admin, maka kerentanan ini terbukti.</p>
                 </div>
                 <div class="bug-section">
-                    <h3>Studi Kasus dan Proof of Concept (PoC)</h3>
-                    <p>Login sebagai pengguna biasa. Perhatikan parameter URL, misalnya `dashboard?user_id=123`. Coba ubah menjadi `user_id=1` (ID admin). Jika halaman admin terbuka, itu adalah bukti Broken Access Control.</p>
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Implementasikan Kontrol Akses Terpusat:</strong> Pastikan setiap permintaan ke sumber daya yang dilindungi melalui fungsi yang memverifikasi hak akses pengguna.</li>
+                        <li><strong>Gunakan Prinsip Least Privilege:</strong> Berikan setiap pengguna hanya hak akses yang benar-benar mereka butuhkan.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div id="bug-module-info-disclosure" class="bug-module">
-                <div class="main-content-header">
+            <div id="content-info-disclosure" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Information Disclosure</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
-                <p>Konten modul akan ditambahkan di sini...</p>
+                <div class="bug-section">
+                    <h3>1. Pengantar: Apa Itu Information Disclosure?</h3>
+                    <p><strong>Information Disclosure</strong> adalah kerentanan di mana aplikasi web secara tidak sengaja mengungkapkan informasi sensitif tentang dirinya sendiri, infrastruktur, atau pengguna kepada penyerang. Informasi ini bisa digunakan penyerang untuk merencanakan serangan lebih lanjut.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Kerentanan ini sering terjadi karena kesalahan konfigurasi, pesan error yang terlalu detail, atau file yang seharusnya tidak terekspos ke publik. Penyerang bisa mendapatkan informasi penting seperti versi server, jalur direktori, atau data pengguna yang bisa di-exploit lebih lanjut.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi Information Disclosure:</strong></p>
+                    <p>Perhatikan pesan error. Jika error yang muncul terlalu detail (misalnya, menampilkan baris kode sumber atau query database), itu adalah indikasi Information Disclosure.</p>
+                    
+                    <p><strong>B. Contoh:</strong></p>
+                    <p>Mengakses URL yang tidak ada, seperti `http://site.com/halaman_yg_ga_ada`. Jika server merespons dengan pesan error yang menunjukkan versi PHP, versi database, atau jalur direktori, itu adalah bukti Information Disclosure.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Jangan Tampilkan Error Verbose:</strong> Gunakan pesan error umum dan log error yang detail di sisi server, jangan di sisi pengguna.</li>
+                        <li><strong>Hapus File Konfigurasi Default:</strong> Hapus file konfigurasi server yang tidak diperlukan.</li>
+                        <li><strong>Jangan Tampilkan Versi Aplikasi:</strong> Sembunyikan versi server web, framework, dan bahasa pemrograman dari header respons HTTP.</li>
+                    </ul>
+                </div>
             </div>
-            <div id="bug-module-misconfig" class="bug-module">
-                <div class="main-content-header">
+
+            <div id="content-misconfig" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: Security Misconfiguration</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
-                <p>Konten modul akan ditambahkan di sini...</p>
+                <div class="bug-section">
+                    <h3>1. Pengantar: Apa Itu Security Misconfiguration?</h3>
+                    <p><strong>Security Misconfiguration</strong> adalah kerentanan yang terjadi karena pengaturan keamanan yang salah pada aplikasi web, server, framework, atau komponen lainnya. Ini adalah salah satu kerentanan paling umum karena mudah terjadi.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>Ini terjadi karena pengaturan default yang tidak aman, manajemen error yang salah, atau hak akses yang terlalu longgar. Penyerang dapat memanfaatkan miskonfigurasi ini untuk mengakses fitur terlarang, mendapatkan data sensitif, atau bahkan mengambil alih server.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi Security Misconfiguration:</strong></p>
+                    <p>Cari halaman atau direktori yang seharusnya terlindungi tetapi bisa diakses. Coba cari file backup atau direktori yang menampilkan daftar file (directory listing).</p>
+                    
+                    <p><strong>B. Contoh:</strong></p>
+                    <p>Mengakses `http://site.com/.git/config`. Jika kamu bisa melihat file ini, berarti server salah mengonfigurasi `web root` dan membiarkan direktori `.git` terekspos.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Ganti Konfigurasi Default:</strong> Selalu ubah kredensial default yang ada.</li>
+                        <li><strong>Terapkan Prinsip Least Privilege:</strong> Pastikan setiap akun, termasuk akun database, hanya memiliki hak akses yang dibutuhkan.</li>
+                        <li><strong>Otomatisasi:</strong> Gunakan alat untuk memindai miskonfigurasi secara otomatis.</li>
+                    </ul>
+                </div>
             </div>
-            <div id="bug-module-xxe" class="bug-module">
-                <div class="main-content-header">
+
+            <div id="content-xxe" class="content-container bug-module">
+                <div class="content-header">
                     <h2>Modul: XML External Entity (XXE)</h2>
                     <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
                 </div>
-                <p>Konten modul akan ditambahkan di sini...</p>
+                <div class="bug-section">
+                    <h3>1. Pengantar: Apa Itu XXE?</h3>
+                    <p><strong>XML External Entity (XXE)</strong> adalah kerentanan yang terjadi ketika aplikasi web memproses input XML yang berisi referensi ke entitas eksternal. Penyerang dapat mengeksploitasi fitur ini untuk membaca file lokal atau mengakses sumber daya internal lainnya.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>2. Cara Kerja dan Dampak</h3>
+                    <p>XML memiliki fitur yang memungkinkan dokumen untuk mereferensikan "entitas" eksternal, seperti URL atau file. Jika parser XML tidak dikonfigurasi dengan benar, penyerang bisa mengirimkan data XML yang jahat. Ini bisa digunakan untuk membaca file lokal, melakukan serangan DoS, atau SSRF.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>3. Teknik Eksploitasi (Langkah Praktis)</h3>
+                    <p><strong>A. Mengidentifikasi XXE:</strong></p>
+                    <p>Cari aplikasi yang menerima input dalam format XML. Coba kirimkan payload XML dasar.</p>
+                    
+                    <p><strong>B. POC Eksploitasi:</strong></p>
+                    <pre><code>&lt;?xml version="1.0" ?&gt;
+&lt;!DOCTYPE test [ &lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt; ]&gt;
+&lt;test&gt;&xxe;&lt;/test&gt;</code></pre>
+                    <p>Payload di atas akan mencoba membaca file `/etc/passwd`. Jika aplikasi merespons dengan isi file tersebut, XXE berhasil.</p>
+                </div>
+                <div class="bug-section">
+                    <h3>4. Mitigasi dan Pencegahan</h3>
+                    <p><strong>Untuk Pengembang Web:</strong></p>
+                    <ul>
+                        <li><strong>Nonaktifkan DTD dan Entitas Eksternal:</strong> Konfigurasikan parser XML untuk menonaktifkan pemrosesan DTD dan entitas eksternal.</li>
+                        <li><strong>Gunakan Library Aman:</strong> Gunakan library parsing XML yang secara default memiliki konfigurasi yang aman.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const welcomePage = document.getElementById('welcome-page');
-            const mainPage = document.getElementById('main-page');
-            const welcomeSearchInput = document.getElementById('welcome-search-input');
             const sidebar = document.getElementById('sidebar');
-            const mainSearchInput = document.getElementById('search-input');
-            const bugList = document.getElementById('bug-list');
-            const allBugModules = document.querySelectorAll('.bug-module');
+            const mainContent = document.getElementById('main-content');
+            const allContentContainers = document.querySelectorAll('.content-container');
+            const bugListContainer = document.getElementById('bug-list-container');
+            const searchInput = document.getElementById('search-input');
+
+            // Initial state: show welcome page
+            showContent('welcome');
 
             window.toggleSidebar = function() {
                 sidebar.classList.toggle('active');
             }
 
-            window.handleWelcomeSearch = function(event) {
-                if (event.key === 'Enter' || event.type === 'click') {
-                    const searchTerm = welcomeSearchInput.value;
-                    toggleView('main-page');
-                    sidebar.classList.add('active'); // Open sidebar on search
-                    mainSearchInput.value = searchTerm;
-                    filterBugs();
-                }
-            };
-            
-            window.showBugModule = function(id) {
-                allBugModules.forEach(module => {
-                    module.classList.remove('active');
+            window.showContent = function(id) {
+                allContentContainers.forEach(container => {
+                    container.classList.remove('active');
                 });
-                document.getElementById(`bug-module-${id}`).classList.add('active');
+                document.getElementById(`content-${id}`).classList.add('active');
+                
+                // Close sidebar on mobile after clicking a menu item
                 if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active'); // Close sidebar after selecting a bug on mobile
+                    sidebar.classList.remove('active');
                 }
+            }
+
+            window.showBugModule = function(id) {
+                showContent(id);
             }
 
             window.filterBugs = function() {
-                const filter = mainSearchInput.value.toLowerCase();
-                const listItems = bugList.getElementsByTagName('li');
+                const filter = searchInput.value.toLowerCase();
+                const bugCards = bugListContainer.getElementsByClassName('bug-card');
                 
-                for (let i = 0; i < listItems.length; i++) {
-                    const item = listItems[i];
-                    const title = item.querySelector('.bug-card-title').textContent || item.querySelector('.bug-card-title').innerText;
-                    const description = item.querySelector('.bug-card-description').textContent || item.querySelector('.bug-card-description').innerText;
-                    const category = item.getAttribute('data-category');
+                for (let i = 0; i < bugCards.length; i++) {
+                    const card = bugCards[i];
+                    const title = card.querySelector('.bug-card-title').textContent || card.querySelector('.bug-card-title').innerText;
+                    const description = card.querySelector('.bug-card-description').textContent || card.querySelector('.bug-card-description').innerText;
+                    const category = card.getAttribute('data-category');
 
                     if (title.toLowerCase().indexOf(filter) > -1 || description.toLowerCase().indexOf(filter) > -1 || category.toLowerCase().indexOf(filter) > -1) {
-                        item.style.display = "flex";
+                        card.style.display = "flex";
                     } else {
-                        item.style.display = "none";
+                        card.style.display = "none";
                     }
                 }
             };
-
-            function toggleView(showPage) {
-                welcomePage.classList.remove('active');
-                mainPage.classList.remove('active');
-                document.getElementById(showPage).classList.add('active');
-            }
-            
-            // Initial view
-            toggleView('welcome-page');
         });
     </script>
 </body>
