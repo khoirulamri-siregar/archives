@@ -66,12 +66,9 @@
             left: 0;
             top: 0;
             z-index: 1000;
-            transform: translateX(-100%);
+            transform: translateX(0);
             transition: transform 0.3s ease-in-out;
             box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-        }
-        .sidebar.active {
-            transform: translateX(0);
         }
         .sidebar-header {
             display: flex;
@@ -115,7 +112,7 @@
         }
         
         #search-input {
-            width: calc(100% - 40px);
+            width: calc(100% - 30px);
             padding: 10px 15px;
             border: none;
             background-color: #2c2c2c;
@@ -320,6 +317,7 @@
             .sidebar {
                 width: 100%;
                 z-index: 1001;
+                transform: translateX(-100%);
             }
             .sidebar.active {
                 transform: translateX(0);
@@ -330,6 +328,13 @@
             }
             .toggle-sidebar-button {
                 display: block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 1002;
+                background-color: rgba(30, 30, 30, 0.8);
+                border-radius: 5px;
+                padding: 8px;
             }
             .content-header h2 {
                 font-size: 1.2rem;
@@ -353,7 +358,7 @@
 </head>
 <body>
     <div id="main-page" class="main-page">
-        <div id="sidebar" class="sidebar active">
+        <div id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <h2>Red Team Archives</h2>
                 <button class="toggle-sidebar-button" onclick="toggleSidebar()">✕</button>
@@ -1105,12 +1110,17 @@ Password: (apapun)</code></pre>
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
+            const welcomeContent = document.getElementById('content-welcome');
+            const bugListContent = document.getElementById('content-bug-list');
+            const roadmapContent = document.getElementById('content-roadmap');
             const allContentContainers = document.querySelectorAll('.content-container');
             const bugListContainer = document.getElementById('bug-list-container');
             const searchInput = document.getElementById('search-input');
 
-            // Initial state: show welcome page
-            showContent('welcome');
+            // Initial state: show welcome page and hide others
+            welcomeContent.classList.add('active');
+            bugListContent.classList.remove('active');
+            roadmapContent.classList.remove('active');
 
             window.toggleSidebar = function() {
                 sidebar.classList.toggle('active');
@@ -1129,7 +1139,10 @@ Password: (apapun)</code></pre>
             }
 
             window.showBugModule = function(id) {
-                showContent(id);
+                allContentContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+                document.getElementById(`content-${id}`).classList.add('active');
             }
 
             window.filterBugs = function() {
@@ -1149,6 +1162,20 @@ Password: (apapun)</code></pre>
                     }
                 }
             };
+
+            // Manage sidebar state on desktop
+            function handleSidebarVisibility() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.add('active');
+                    mainContent.style.marginLeft = '340px';
+                } else {
+                    sidebar.classList.remove('active');
+                    mainContent.style.marginLeft = '0';
+                }
+            }
+
+            window.addEventListener('resize', handleSidebarVisibility);
+            handleSidebarVisibility(); // Run on initial load
         });
     </script>
 </body>
