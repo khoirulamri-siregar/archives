@@ -1,0 +1,521 @@
+:root {
+    --bg-color: #121212;
+    --card-color: #1E1E1E;
+    --red-accent: #E53935;
+    --text-color: #EEEEEE;
+    --light-gray: #BDBDBD;
+    --main-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --border-color: #333;
+    --sidebar-bg: #1a1a1a;
+}
+
+/* Light Mode Variables */
+body.light-mode {
+    --bg-color: #F0F2F5;
+    --card-color: #FFFFFF;
+    --red-accent: #D32F2F;
+    --text-color: #333333;
+    --light-gray: #757575;
+    --border-color: #E0E0E0;
+    --sidebar-bg: #E0E0E0;
+}
+
+body {
+    font-family: var(--main-font);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: background-color 0.5s ease;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #2d0000, #121212 75%);
+    opacity: 0.3;
+    z-index: -1;
+    animation: pulse-gradient 15s infinite ease-in-out;
+    transition: opacity 0.5s ease;
+}
+
+body.light-mode::before {
+    background: radial-gradient(circle, #FFCDD2, #F0F2F5 75%);
+    opacity: 0.5;
+}
+
+@keyframes pulse-gradient {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.main-page {
+    display: flex;
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+}
+
+.main-page.hidden {
+    display: none;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    overflow-y: auto;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out, background-color 0.5s;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+body.light-mode .sidebar {
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--red-accent);
+}
+
+.sidebar-nav {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sidebar-nav li a {
+    background-color: var(--card-color);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s;
+}
+
+.sidebar-nav li a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+    background-color: var(--sidebar-bg);
+}
+
+body.light-mode .sidebar-nav li a:hover {
+    background-color: #F0F0F0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-nav-icon {
+    font-size: 1.2rem;
+    color: var(--red-accent);
+}
+
+#search-input {
+    width: calc(100% - 30px);
+    padding: 10px 15px;
+    border: none;
+    background-color: var(--card-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    outline: none;
+    font-size: 1rem;
+    margin-top: 20px;
+    transition: background-color 0.5s;
+}
+
+/* Main Content Area */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+    margin-left: 340px;
+    position: relative;
+}
+
+.content-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Welcome Page Styles */
+#welcome-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    padding: 20px;
+}
+
+#welcome-page h1 {
+    font-size: 3.5rem;
+    color: var(--red-accent);
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+}
+
+#welcome-page p {
+    font-size: 1.2rem;
+    margin-top: 0;
+    color: var(--light-gray);
+    margin-bottom: 25px;
+}
+
+/* Bug List Styles */
+#bug-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding-top: 20px;
+}
+
+.bug-card {
+    background-color: var(--card-color);
+    padding: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.bug-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    background-color: var(--sidebar-bg);
+}
+
+body.light-mode .bug-card:hover {
+    background-color: #F0F0F0;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.bug-card-title {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.bug-card-title .icon {
+    font-size: 1.2em;
+    margin-right: 10px;
+    color: var(--red-accent);
+}
+
+.bug-card-description {
+    font-size: 0.9rem;
+    color: var(--light-gray);
+    margin: 0;
+}
+
+/* Bug Module & Roadmap Styles */
+.content-container {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    min-height: 80vh;
+}
+
+.content-container.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+.content-header h2 {
+    border-left: 4px solid var(--red-accent);
+    padding-left: 10px;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.bug-section {
+    margin-top: 30px;
+}
+
+.bug-section h3 {
+    color: var(--red-accent);
+    font-size: 1.2rem;
+}
+
+pre {
+    background-color: var(--card-color);
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.5s, border-color 0.5s;
+}
+
+.toggle-sidebar-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s;
+    display: none;
+}
+
+.toggle-sidebar-button:hover {
+    color: var(--red-accent);
+}
+
+.roadmap-section {
+    margin-bottom: 40px;
+}
+
+.roadmap-section h3 {
+    font-size: 2rem;
+    border-left: 4px solid var(--red-accent);
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+.roadmap-level {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.roadmap-card {
+    background-color: var(--card-color);
+    padding: 20px;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.roadmap-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    background-color: var(--sidebar-bg);
+}
+
+body.light-mode .roadmap-card:hover {
+    background-color: #F0F0F0;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: var(--red-accent);
+    flex-shrink: 0;
+}
+
+.card-content {
+    flex-grow: 1;
+}
+
+.card-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+}
+
+.card-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--light-gray);
+}
+
+/* Tools List Styles */
+.tools-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.tool-card {
+    background-color: var(--card-color);
+    padding: 20px;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    background-color: var(--sidebar-bg);
+}
+
+body.light-mode .tool-card:hover {
+    background-color: #F0F0F0;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tool-card-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.tool-card h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--red-accent);
+}
+
+.tool-card p {
+    font-size: 0.9rem;
+    color: var(--light-gray);
+    margin-top: 5px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Theme and Language Switcher */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.theme-switcher, .lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.switcher-label {
+    font-weight: bold;
+    color: var(--light-gray);
+}
+
+.switcher-button {
+    background-color: var(--card-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.switcher-button:hover {
+    background-color: var(--sidebar-bg);
+}
+
+body.light-mode .switcher-button:hover {
+    background-color: #F0F0F0;
+}
+
+.switcher-button:active {
+    transform: scale(0.95);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .main-page {
+        display: block;
+        height: auto;
+        overflow-y: auto;
+    }
+    .sidebar {
+        width: 100%;
+        z-index: 1001;
+        transform: translateX(-100%);
+        height: 100%;
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+    .toggle-sidebar-button {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1002;
+        background-color: rgba(30, 30, 30, 0.8);
+        border-radius: 5px;
+        padding: 8px;
+    }
+    .content-header h2 {
+        font-size: 1.2rem;
+    }
+    #welcome-page h1 {
+        font-size: 2.5rem;
+    }
+    #welcome-page p {
+        font-size: 1rem;
+    }
+    .roadmap-section h3 {
+        font-size: 1.5rem;
+    }
+    .roadmap-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
