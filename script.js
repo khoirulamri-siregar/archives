@@ -137,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Shodan', description: 'Mesin pencari untuk perangkat dan layanan yang terhubung ke internet.', icon: '🕵️' }
     ];
 
-    // Updated data for English translations
     const toolsDataEN = [
         { name: 'Burp Suite', description: 'A proxy tool for web application security testing.', icon: '🕷️' },
         { name: 'OWASP ZAP', description: 'A free and open-source web security scanner.', icon: '⚡' },
@@ -165,13 +164,11 @@ document.addEventListener('DOMContentLoaded', () => {
             element.textContent = langData[key];
         });
 
-        // Update dynamic content
         populateBugList();
         populateRoadmap();
         populateToolsList();
         updateCurrentModuleContent();
 
-        // Update search placeholder
         searchInput.placeholder = langData.searchPlaceholder;
     }
 
@@ -180,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeContainer) {
             const id = activeContainer.id.replace('content-', '');
             if (bugsData.find(bug => bug.id === id)) {
-                // Re-render the module with the new language
                 document.getElementById(`content-${id}`).innerHTML = getBugModuleContent(id);
             }
         }
@@ -245,14 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Bug Modules Content Functions (semua materi ada di sini) ---
     function getBugModuleContent(bugId) {
         const lang = currentLanguage;
         const texts = translations[lang];
         const bug = bugsData.find(b => b.id === bugId);
 
         let content = '';
-        // Perbaikan: Hapus tombol menu dari dalam modul
         const moduleHeader = `
             <div class="content-header">
                 <h2>${texts.modul} ${bug.title}</h2>
@@ -718,42 +712,40 @@ Password: (apapun)</code></pre>
 
     function populateBugModules() {
         const mainContentElement = document.getElementById('main-content');
-        // Clear old modules first
         mainContentElement.querySelectorAll('.bug-module').forEach(el => el.remove());
 
         bugsData.forEach(bug => {
             const moduleContainer = document.createElement('div');
             moduleContainer.id = `content-${bug.id}`;
             moduleContainer.className = 'content-container bug-module';
-            // Panggil getBugModuleContent untuk mengisi konten
             moduleContainer.innerHTML = getBugModuleContent(bug.id);
             mainContentElement.querySelector('.content-wrapper').appendChild(moduleContainer);
         });
     }
 
-    // --- Core UI Functions ---
     window.toggleSidebar = function() {
         sidebar.classList.toggle('active');
     }
 
-    // Fungsi baru untuk menyembunyikan semua konten
-    function hideAllModulesAndContainers() {
+    // Fungsi inti yang menyembunyikan semua konten aktif sebelum menampilkan yang baru
+    function hideAllContent() {
         allContentContainers.forEach(container => {
             container.classList.remove('active');
         });
     }
-
+    
+    // Ini adalah fungsi navigasi utama yang diperbaiki
     window.showContent = function(id) {
-        hideAllModulesAndContainers();
+        hideAllContent();
         document.getElementById(`content-${id}`).classList.add('active');
-
+        
         if (window.innerWidth <= 768) {
             sidebar.classList.remove('active');
         }
     }
 
     window.showBugModule = function(id) {
-        hideAllModulesAndContainers();
+        hideAllContent(); // Pastikan semua konten lain disembunyikan
         document.getElementById(`content-${id}`).classList.add('active');
 
         mainContent.scrollTo(0, 0);
@@ -781,7 +773,6 @@ Password: (apapun)</code></pre>
         }
     };
 
-    // Theme and Language Toggles
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         document.body.classList.toggle('light-mode');
@@ -805,7 +796,6 @@ Password: (apapun)</code></pre>
         }
     }
 
-    // Initial population and setup
     populateBugList();
     populateRoadmap();
     populateToolsList();
