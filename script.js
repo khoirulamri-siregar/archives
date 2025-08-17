@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Gobuster', description: 'Alat cepat untuk *directory busting*.', icon: '🏃' },
         { name: 'Shodan', description: 'Mesin pencari untuk perangkat dan layanan yang terhubung ke internet.', icon: '🕵️' }
     ];
-    
+
     // Updated data for English translations
     const toolsDataEN = [
         { name: 'Burp Suite', description: 'A proxy tool for web application security testing.', icon: '🕷️' },
@@ -169,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         populateBugList();
         populateRoadmap();
         populateToolsList();
-        populateBugModules();
         updateCurrentModuleContent();
 
         // Update search placeholder
@@ -181,7 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeContainer) {
             const id = activeContainer.id.replace('content-', '');
             if (bugsData.find(bug => bug.id === id)) {
-                showBugModule(id, false); // Re-render the module with the new language
+                // Re-render the module with the new language
+                document.getElementById(`content-${id}`).innerHTML = getBugModuleContent(id);
             }
         }
     }
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bugCard.className = 'bug-card';
             bugCard.onclick = () => showBugModule(bug.id);
             bugCard.setAttribute('data-category', bug.title);
-            const desc = currentLanguage === 'id' ? bug.description : translations.en[`${bug.id}Desc`];
+            const desc = currentLanguage === 'id' ? translations.id[`${bug.id}Desc`] : translations.en[`${bug.id}Desc`];
             bugCard.innerHTML = `
                 <div class="bug-card-title"><span class="icon">${bug.icon}</span> ${bug.title}</div>
                 <p class="bug-card-description">${desc}</p>
@@ -207,8 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
         roadmapData.forEach(level => {
             const roadmapSection = document.createElement('div');
             roadmapSection.className = 'roadmap-section';
-            const levelText = currentLanguage === 'id' ? translations.id[`${level.bugs[0]}Desc`.replace(/Desc$/, 'Level')] : translations.en[`${level.bugs[0]}Desc`.replace(/Desc$/, 'Level')];
-            roadmapSection.innerHTML = `<h3>${level.level}</h3><div class="roadmap-level"></div>`;
+            const levelText = currentLanguage === 'id' ? level.level : translations.en[`${level.bugs[0]}Level`];
+            roadmapSection.innerHTML = `<h3>${levelText}</h3><div class="roadmap-level"></div>`;
             const roadmapLevel = roadmapSection.querySelector('.roadmap-level');
 
             level.bugs.forEach(bugId => {
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const roadmapCard = document.createElement('div');
                 roadmapCard.className = 'roadmap-card';
                 roadmapCard.onclick = () => showBugModule(bug.id);
-                const desc = currentLanguage === 'id' ? bug.description : translations.en[`${bug.id}Desc`];
+                const desc = currentLanguage === 'id' ? translations.id[`${bug.id}Desc`] : translations.en[`${bug.id}Desc`];
                 roadmapCard.innerHTML = `
                     <div class="card-icon">${bug.icon}</div>
                     <div class="card-content">
@@ -245,20 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function populateBugModules() {
-        const mainContentElement = document.getElementById('main-content');
-        // Clear old modules first
-        mainContentElement.querySelectorAll('.bug-module').forEach(el => el.remove());
-        
-        bugsData.forEach(bug => {
-            const moduleContainer = document.createElement('div');
-            moduleContainer.id = `content-${bug.id}`;
-            moduleContainer.className = 'content-container bug-module';
-            moduleContainer.innerHTML = getBugModuleContent(bug.id);
-            mainContentElement.querySelector('.content-wrapper').appendChild(moduleContainer);
-        });
-    }
-
     // --- Bug Modules Content Functions (semua materi ada di sini) ---
     function getBugModuleContent(bugId) {
         const lang = currentLanguage;
@@ -266,14 +252,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const bug = bugsData.find(b => b.id === bugId);
 
         let content = '';
+        // Perbaikan: Hapus tombol menu dari dalam modul
+        const moduleHeader = `
+            <div class="content-header">
+                <h2>${texts.modul} ${bug.title}</h2>
+            </div>
+        `;
 
         switch (bugId) {
             case 'sqli':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>SQL Injection (SQLi)</strong> ${lang === 'id' ? 'adalah teknik serangan yang menyuntikkan kode SQL berbahaya melalui input aplikasi. Tujuannya adalah untuk memanipulasi basis data (database) agar melakukan perintah yang tidak seharusnya.' : 'is an attack technique that injects malicious SQL code through application input. Its purpose is to manipulate the database to perform unintended commands.'}</p>
@@ -304,13 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 break;
-            // ... (Add cases for other bugs, with translations)
             case 'xss':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Cross-Site Scripting (XSS)</strong> ${lang === 'id' ? 'adalah kerentanan di mana penyerang menyuntikkan kode skrip berbahaya (biasanya JavaScript) ke dalam halaman web.' : 'is a vulnerability where an attacker injects malicious script code (usually JavaScript) into a web page.'}</p>
@@ -344,10 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'lfi':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Local File Inclusion (LFI)</strong> ${lang === 'id' ? 'adalah kerentanan di mana penyerang dapat membaca file dari sistem lokal server melalui manipulasi input.' : 'is a vulnerability where an attacker can read files from the server\'s local system by manipulating input.'}</p>
@@ -380,10 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'rce':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Remote Code Execution (RCE)</strong> ${lang === 'id' ? 'adalah kerentanan keamanan paling parah di mana penyerang dapat mengeksekusi perintah di server dari jarak jauh. Ini memberikan penyerang kendali penuh atas server target.' : 'is the most severe security vulnerability where an attacker can execute commands on the server remotely. This gives the attacker full control over the target server.'}</p>
@@ -411,10 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'csrf':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Cross-Site Request Forgery (CSRF)</strong> ${lang === 'id' ? 'adalah serangan yang memaksa pengguna yang sudah terautentikasi (sudah login) untuk melakukan tindakan yang tidak mereka inginkan di sebuah situs web yang rentan.' : 'is an attack that forces an authenticated user to perform an unwanted action on a vulnerable website.'}</p>
@@ -453,10 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'ssrf':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Server-Side Request Forgery (SSRF)</strong> ${lang === 'id' ? 'adalah kerentanan di mana penyerang dapat memaksa server web untuk mengirimkan permintaan ke URL yang ditentukan oleh penyerang. Ini berbeda dari CSRF karena serangan ini terjadi di sisi server.' : 'is a vulnerability where an attacker can force the web server to send a request to a URL specified by the attacker. This differs from CSRF because the attack occurs on the server-side.'}</p>
@@ -486,10 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'idor':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Insecure Direct Object Reference (IDOR)</strong> ${lang === 'id' ? 'adalah kerentanan di mana penyerang dapat mengakses objek (misalnya data atau akun pengguna) dengan mengubah nilai parameter yang mengacu pada objek tersebut, tanpa ada validasi otorisasi.' : 'is a vulnerability where an attacker can access objects (e.g., user data or accounts) by changing the value of a parameter that refers to that object, without any authorization validation.'}</p>
@@ -516,10 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'auth-bypass':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Authentication Bypass</strong> ${lang === 'id' ? 'adalah kerentanan yang memungkinkan penyerang untuk melewati mekanisme login atau otentikasi suatu aplikasi web dan mendapatkan akses ke akun pengguna atau area yang seharusnya terlarang, seperti panel admin.' : 'is a vulnerability that allows an attacker to bypass a web application\'s login or authentication mechanism and gain access to user accounts or restricted areas, such as an admin panel.'}</p>
@@ -548,10 +515,7 @@ Password: (apapun)</code></pre>
                 break;
             case 'file-upload':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>File Upload Vulnerability</strong> ${lang === 'id' ? 'adalah kerentanan yang terjadi ketika aplikasi web mengizinkan pengguna mengunggah file tanpa validasi yang memadai. Penyerang dapat mengunggah file berbahaya (misalnya, skrip shell) untuk mendapatkan Remote Code Execution (RCE) di server.' : 'is a vulnerability that occurs when a web application allows users to upload files without adequate validation. An attacker can upload a malicious file (e.g., a shell script) to gain Remote Code Execution (RCE) on the server.'}</p>
@@ -580,10 +544,7 @@ Password: (apapun)</code></pre>
                 break;
             case 'cmd-injection':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Command Injection</strong> ${lang === 'id' ? 'adalah serangan di mana penyerang dapat mengeksekusi perintah pada sistem operasi host melalui input yang tidak divalidasi. Serangan ini sering berujung pada <strong>Remote Code Execution (RCE)</strong>.' : 'is an attack where an attacker can execute commands on the host operating system through unvalidated input. This attack often leads to <strong>Remote Code Execution (RCE)</strong>.'}</p>
@@ -611,10 +572,7 @@ Password: (apapun)</code></pre>
                 break;
             case 'open-redirect':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Open Redirect</strong> ${lang === 'id' ? 'adalah kerentanan di mana aplikasi web mengizinkan penyerang untuk memanipulasi parameter URL yang digunakan untuk redirect pengguna ke URL eksternal yang berbahaya. Kerentanan ini sering digunakan dalam serangan phishing.' : 'is a vulnerability where a web application allows an attacker to manipulate a URL parameter used to redirect a user to a dangerous external URL. This vulnerability is often used in phishing attacks.'}</p>
@@ -642,13 +600,10 @@ Password: (apapun)</code></pre>
                 break;
             case 'broken-ac':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
-                        <p><strong>Broken Access Control</strong> ${lang === 'id' ? 'adalah kerentanan di mana aplikasi web gagal untuk mengontrol hak akses pengguna dengan benar. Ini memungkinkan pengguna biasa untuk mengakses fungsi atau data yang seharusnya hanya dapat diakses oleh pengguna dengan hak istimewa (misalnya, administrator).' : 'is a vulnerability where a web application fails to properly control user access rights. This allows regular users to access functions or data that should only be accessible to privileged users (e.g., administrators).'}</p>
+                        <p><strong>Broken Access Control</strong> ${lang === 'id' ? 'adalah kerentanan di mana aplikasi web gagal untuk mengontrol hak akses pengguna dengan benar. Ini memungkinkan pengguna biasa untuk mengakses fungsi atau data yang seharusnya hanya dapat diakses oleh pengguna dengan hak istimewa (misalnya, administrator).' : 'is a vulnerability where a web application fails to properly control user access rights. This allows regular users to access functions or data that should only be accessible to privileged users (e.g., administrator).'}</p>
                     </div>
                     <div class="bug-section">
                         <h3>2. ${texts.howitworks}</h3>
@@ -672,10 +627,7 @@ Password: (apapun)</code></pre>
                 break;
             case 'info-disclosure':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Information Disclosure</strong> ${lang === 'id' ? 'adalah kerentanan di mana aplikasi web secara tidak sengaja mengungkapkan informasi sensitif tentang dirinya sendiri, infrastruktur, atau pengguna kepada penyerang. Informasi ini bisa digunakan penyerang untuk merencanakan serangan lebih lanjut.' : 'is a vulnerability where a web application unintentionally reveals sensitive information about itself, its infrastructure, or users to an attacker. This information can be used by an attacker to plan further attacks.'}</p>
@@ -702,10 +654,7 @@ Password: (apapun)</code></pre>
                 break;
             case 'misconfig':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>Security Misconfiguration</strong> ${lang === 'id' ? 'adalah kerentanan yang terjadi karena pengaturan keamanan yang salah pada aplikasi web, server, framework, atau komponen lainnya. Ini adalah salah satu kerentanan paling umum.' : 'is a vulnerability that occurs due to incorrect security settings on a web application, server, framework, or other components. This is one of the most common vulnerabilities.'}</p>
@@ -732,10 +681,7 @@ Password: (apapun)</code></pre>
                 break;
             case 'xxe':
                 content = `
-                    <div class="content-header">
-                        <h2>${texts.modul} ${bug.title}</h2>
-                        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
-                    </div>
+                    ${moduleHeader}
                     <div class="bug-section">
                         <h3>1. ${texts.intro} ${bug.title}?</h3>
                         <p><strong>XML External Entity (XXE)</strong> ${lang === 'id' ? 'adalah kerentanan yang terjadi ketika aplikasi web memproses input XML yang berisi referensi ke entitas eksternal. Penyerang dapat mengeksploitasi fitur ini untuk membaca file lokal atau mengakses sumber daya internal lainnya.' : 'is a vulnerability that occurs when a web application processes XML input containing references to external entities. An attacker can exploit this feature to read local files or access other internal resources.'}</p>
@@ -770,28 +716,46 @@ Password: (apapun)</code></pre>
         return content;
     }
 
+    function populateBugModules() {
+        const mainContentElement = document.getElementById('main-content');
+        // Clear old modules first
+        mainContentElement.querySelectorAll('.bug-module').forEach(el => el.remove());
+
+        bugsData.forEach(bug => {
+            const moduleContainer = document.createElement('div');
+            moduleContainer.id = `content-${bug.id}`;
+            moduleContainer.className = 'content-container bug-module';
+            // Panggil getBugModuleContent untuk mengisi konten
+            moduleContainer.innerHTML = getBugModuleContent(bug.id);
+            mainContentElement.querySelector('.content-wrapper').appendChild(moduleContainer);
+        });
+    }
+
     // --- Core UI Functions ---
     window.toggleSidebar = function() {
         sidebar.classList.toggle('active');
     }
 
-    window.showContent = function(id) {
+    // Fungsi baru untuk menyembunyikan semua konten
+    function hideAllModulesAndContainers() {
         allContentContainers.forEach(container => {
             container.classList.remove('active');
         });
+    }
+
+    window.showContent = function(id) {
+        hideAllModulesAndContainers();
         document.getElementById(`content-${id}`).classList.add('active');
-        
+
         if (window.innerWidth <= 768) {
             sidebar.classList.remove('active');
         }
     }
 
     window.showBugModule = function(id) {
-        allContentContainers.forEach(container => {
-            container.classList.remove('active');
-        });
+        hideAllModulesAndContainers();
         document.getElementById(`content-${id}`).classList.add('active');
-        
+
         mainContent.scrollTo(0, 0);
 
         if (window.innerWidth <= 768) {
@@ -802,7 +766,7 @@ Password: (apapun)</code></pre>
     window.filterBugs = function() {
         const filter = searchInput.value.toLowerCase();
         const bugCards = bugListContainer.getElementsByClassName('bug-card');
-        
+
         for (let i = 0; i < bugCards.length; i++) {
             const card = bugCards[i];
             const title = card.querySelector('.bug-card-title').textContent || card.querySelector('.bug-card-title').innerText;
@@ -816,7 +780,7 @@ Password: (apapun)</code></pre>
             }
         }
     };
-    
+
     // Theme and Language Toggles
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
@@ -846,7 +810,7 @@ Password: (apapun)</code></pre>
     populateRoadmap();
     populateToolsList();
     populateBugModules();
-    
+
     window.addEventListener('resize', handleSidebarVisibility);
     handleSidebarVisibility();
 });
