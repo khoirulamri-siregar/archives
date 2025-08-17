@@ -727,14 +727,12 @@ Password: (apapun)</code></pre>
         sidebar.classList.toggle('active');
     }
 
-    // Fungsi inti yang menyembunyikan semua konten aktif sebelum menampilkan yang baru
     function hideAllContent() {
         allContentContainers.forEach(container => {
             container.classList.remove('active');
         });
     }
     
-    // Ini adalah fungsi navigasi utama yang diperbaiki
     window.showContent = function(id) {
         hideAllContent();
         document.getElementById(`content-${id}`).classList.add('active');
@@ -745,7 +743,7 @@ Password: (apapun)</code></pre>
     }
 
     window.showBugModule = function(id) {
-        hideAllContent(); // Pastikan semua konten lain disembunyikan
+        hideAllContent();
         document.getElementById(`content-${id}`).classList.add('active');
 
         mainContent.scrollTo(0, 0);
