@@ -8,10 +8,11 @@
 </head>
 <body class="dark-mode">
     <div id="main-page" class="main-page">
+        <button class="toggle-sidebar-button" onclick="toggleSidebar()">☰</button>
         <div id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <h2 id="app-title">Red Team Archives</h2>
-                <button class="toggle-sidebar-button" onclick="toggleSidebar()">✕</button>
+                <button class="close-sidebar-button" onclick="toggleSidebar()">✕</button>
             </div>
             <ul class="sidebar-nav">
                 <li><a href="#" onclick="showContent('welcome')"><span class="sidebar-nav-icon">🏠</span><span class="nav-text" data-lang="home">Halaman Awal</span></a></li>
@@ -47,24 +48,21 @@
                         <h2 data-lang="bugListHeader">Daftar Jenis Bug</h2>
                     </div>
                     <input type="text" id="search-input" data-lang="searchPlaceholder" placeholder="Cari bug..." onkeyup="filterBugs()">
-                    <div id="bug-list-container">
-                    </div>
+                    <div id="bug-list-container"></div>
                 </div>
 
                 <div id="content-roadmap" class="content-container">
                     <div class="content-header">
                         <h2 data-lang="roadmapHeader">Peta Jalan Belajar</h2>
                     </div>
-                    <div class="roadmap-container">
-                    </div>
+                    <div class="roadmap-container"></div>
                 </div>
 
                 <div id="content-tools" class="content-container">
                     <div class="content-header">
                         <h2 data-lang="toolsHeader">15 Tools Populer</h2>
                     </div>
-                    <div class="tools-list-container">
-                    </div>
+                    <div class="tools-list-container"></div>
                 </div>
             </div>
         </div>
